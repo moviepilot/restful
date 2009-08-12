@@ -18,18 +18,6 @@ context "json serializer" do
   end
   
   xspecify "serialize to json" do
-    actual = @person.to_restful.serialize(:json)
-  
-    expected = 
-      {
-        :restful_url => "http://example.com:3000/people/#{ @person.id }",
-        :name => "Joe Bloggs",
-        :current_location => "Under a tree",
-        :created_at => @person.created_at.xmlschema,
-        :wallet=>{:contents=>"an old photo, 5 euros in coins"},
-        :pets => [ {:name => "mietze"} ]
-      }
-
-    actual.should.==  Yajl::Encoder.encode(expected)
+    json_should_eql(@person.to_restful_json, "people", :bloggs)
   end
 end

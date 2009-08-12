@@ -23,56 +23,16 @@ context "params serializer" do
     resource = serializer.deserialize(expected)    
     actual = serializer.serialize(resource)
 
-    xml_should_be_same(expected, actual)
+    xml_should_eql(expected, actual)
   end
   
   specify "should convert a NULL inner association such as person.wallet to a link with a null value" do
     @person.wallet = nil
-    
-    actual = @person.to_restful(:restful_options => { :expansion => :collapsed }).serialize(:xml)
-    expected = <<EXPECTED
-<?xml version="1.0" encoding="UTF-8"?>
-<person>
-  <restful-url type="link">http://example.com:3000/people/#{ @person.id }</restful-url>
-  <name>Joe Bloggs</name>
-  <created-at type="datetime">#{ @person.created_at.xmlschema }</created-at>
-  <current-location>Under a tree</current-location>
-  <pets type="array">
-    <pet>
-      <restful-url type="link">http://example.com:3000/pets/#{ @pet.id }</restful-url>
-      <name>mietze</name>
-    </pet>
-  </pets>
-  <wallet-restful-url type="link" nil="true"></wallet-restful-url>
-</person>
-EXPECTED
-    xml_should_be_same(expected, actual)
-    
+
+    xml_should_eql_fixture(@person.to_restful_xml(:restful_options => { :expansion => :collapsed }), "people", :verbose_with_pets)    
   end
   
   specify "serialize to xml, rails style" do
-    actual = @person.to_restful.serialize(:xml)
-
-    expected = <<EXPECTED
-<?xml version="1.0" encoding="UTF-8"?>
-<person>
-  <restful-url type="link">http://example.com:3000/people/#{ @person.id }</restful-url>
-  <name>Joe Bloggs</name>
-  <created-at type="datetime">#{ @person.created_at.xmlschema }</created-at>
-  <current-location>Under a tree</current-location>
-  <pets type="array">
-    <pet>
-      <restful-url type="link">http://example.com:3000/pets/#{ @pet.id }</restful-url>
-      <name>mietze</name>
-    </pet>
-  </pets>
-  <wallet>
-    <restful-url type="link">http://example.com:3000/wallets/#{ @wallet.id }</restful-url>
-    <contents>an old photo, 5 euros in coins</contents>
-  </wallet>
-</person>
-EXPECTED
-    xml_should_be_same(expected, actual)
+    xml_should_eql_fixture(@person.to_restful_xml, "people", :with_pets_and_expanded_wallet)
   end
-
 end

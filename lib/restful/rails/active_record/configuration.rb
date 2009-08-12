@@ -54,6 +54,13 @@ module Restful
           def restful_path
             "/#{ self.class.to_s.tableize }/#{ self.to_param }"
           end
+          
+          # FIXME: read out Restful::Serializers::Base.serializers. Load order problems?
+          [:xml, :json, :atom_like].each do |format|
+            define_method("to_restful_#{ format }") do |*args|
+              self.to_restful(*args).serialize(format)
+            end            
+          end
         end
         
         class Config # configures what attributes are exposed to the api. for a single resource.

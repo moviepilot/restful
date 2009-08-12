@@ -32,17 +32,8 @@ context "params serializer" do
     actual.should.== expected
   end
   
-  specify "serialize to an ar params hash" do
-
-    input = <<EXPECTED
-<?xml version="1.0" encoding="UTF-8"?>
-<pet>
-  <person-restful-url type="link">http://example.com:3000/people/#{ @person.id }</person-restful-url>
-  <species>123</species>
-  <name>Gracie</name>
-</pet>
-EXPECTED
-
+  specify "serialize to an ar params hash" do    
+    input = xml_fixture("pets")[:gracie]
     params = Restful.from_xml(input).serialize(:params)
     clone = Pet.create!(params)
 

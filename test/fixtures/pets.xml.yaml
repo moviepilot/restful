@@ -1,0 +1,21 @@
+nameless_pet:
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <pet>
+      <restful-url type="link">http://example.com:3000/pets/<%= @pet.id %></restful-url>
+      <owner>
+        <restful-url type="link">http://example.com:3000/people/<%= @person.id %></restful-url>
+        <name>Joe Bloggs</name>
+        <current-location>Under a tree</current-location>
+        <wallet-restful-url type="link">http://example.com:3000/wallets/<%= @wallet.id %></wallet-restful-url>
+      </owner>
+    </pet>
+    
+gracie:
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <pet>
+      <person-restful-url type="link">http://example.com:3000/people/<%= @person.id %></person-restful-url>
+      <species>123</species>
+      <name>Gracie</name>
+    </pet>

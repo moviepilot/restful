@@ -1,0 +1,105 @@
+joe_bloggs:
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <person>
+      <restful-url type="link">http://example.com:3000/people/<%= @person.id %></restful-url>
+      <name>Joe Bloggs</name>
+      <wallet-restful-url type="link">http://example.com:3000/wallets/<%= @wallet.id %></wallet-restful-url>
+    </person>
+
+no_wallet:
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <person>
+      <restful-url type="link">http://example.com:3000/people/<%= @person.id %></restful-url>
+      <location-sentence><%= @person.location_sentence %></location-sentence>
+    </person>
+    
+with_oldest_pet:
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <person>
+      <restful-url type="link">http://example.com:3000/people/<%= @person.id %></restful-url>
+      <oldest-pet>
+        <restful-url type="link">http://example.com:3000/pets/<%= @person.oldest_pet.id %></restful-url>
+        <name><%= @person.oldest_pet.name %></name>
+        <person-restful-url type="link">http://example.com:3000/people/<%= @person.id %></person-restful-url>
+      </oldest-pet>
+    </person>
+    
+with_oldest_pet_species:
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <person>
+      <restful-url type="link">http://example.com:3000/people/<%= @person.id %></restful-url>
+      <oldest-pet>
+        <restful-url type="link">http://example.com:3000/pets/<%= @person.oldest_pet.id %></restful-url>
+        <species type="integer"><%= @person.oldest_pet.species %></species>
+      </oldest-pet>
+    </person>
+    
+joe_with_zwiebelleder:    
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <person>
+      <restful-url type="link">http://example.com:3000/people/<%= @person.id %></restful-url>
+      <wallet nil="true"></wallet>
+    </person>
+    
+atom_person:
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <person xml:base="http://example.com:3000">
+      <created-at><%= @person.created_at.xmlschema %></created-at>
+      <link rel="self" href="/people/<%= @person.id %>"/>
+      <name>Joe Bloggs</name>
+      <current-location>Under a tree</current-location>
+      <pets>
+        <pet>
+          <link rel="self" href="/pets/<%= @pet.id %>"/>
+          <name>mietze</name>
+        </pet>
+      </pets>
+      <wallet>
+        <link rel="self" href="/wallets/<%= @wallet.id %>"/>
+        <contents>an old photo, 5 euros in coins</contents>
+      </wallet>
+    </person>
+    
+verbose_with_pets:
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <person>
+      <restful-url type="link">http://example.com:3000/people/<%= @person.id %></restful-url>
+      <name>Joe Bloggs</name>
+      <created-at type="datetime"><%= @person.created_at.xmlschema %></created-at>
+      <current-location>Under a tree</current-location>
+      <pets type="array">
+        <pet>
+          <restful-url type="link">http://example.com:3000/pets/<%= @pet.id %></restful-url>
+          <name>mietze</name>
+        </pet>
+      </pets>
+      <wallet-restful-url type="link" nil="true"></wallet-restful-url>
+    </person>
+    
+with_pets_and_expanded_wallet:
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <person>
+      <restful-url type="link">http://example.com:3000/people/<%= @person.id %></restful-url>
+      <name>Joe Bloggs</name>
+      <created-at type="datetime"><%= @person.created_at.xmlschema %></created-at>
+      <current-location>Under a tree</current-location>
+      <pets type="array">
+        <pet>
+          <restful-url type="link">http://example.com:3000/pets/<%= @pet.id %></restful-url>
+          <name>mietze</name>
+        </pet>
+      </pets>
+      <wallet>
+        <restful-url type="link">http://example.com:3000/wallets/<%= @wallet.id %></restful-url>
+        <contents>an old photo, 5 euros in coins</contents>
+      </wallet>
+    </person>
+  

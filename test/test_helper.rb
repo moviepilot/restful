@@ -1,7 +1,3 @@
-plugin_test = File.dirname(__FILE__)
-plugin_root = File.join plugin_test, '..'
-plugin_lib = File.join plugin_root, 'lib'
-
 require 'rubygems'
 require 'ruby-debug'
 require 'active_support'
@@ -12,11 +8,17 @@ require 'mocha'
 require 'hpricot'
 require 'xmlsimple'
 require 'yajl'
+require 'pathname'
+
+plugin_test = Pathname.new(File.dirname(__FILE__))
+plugin_root = plugin_test.join '..'
+plugin_lib = plugin_root.join 'lib'
 
 $:.unshift plugin_lib, plugin_test
 
 RAILS_ENV = "test"
 RAILS_ROOT = plugin_root # fake the rails root directory.
+RESTFUL_ROOT = plugin_root
 
 ActiveRecord::Base.logger = Logger.new(STDERR)
 ActiveRecord::Base.logger.level = Logger::ERROR
@@ -55,7 +57,7 @@ silence_stream(STDOUT) do
   end
 end
 
-require plugin_root + '/init'
+require plugin_root.join 'init'
 require 'fixtures/models/pet'
 require 'fixtures/models/wallet'
 require 'fixtures/models/person'
@@ -71,23 +73,50 @@ def reset_config
   Wallet.restful_config = Restful.cfg  
 end
 
-def xml_cmp a, b
+def xml_cmp(a, b)
   eq_all_but_zero = Object.new.instance_eval do
     def ==(other)
       Integer(other) == 0 ? false : true
     end
     self
   end
+  
   a = XmlSimple.xml_in(a.to_s, 'normalisespace' => eq_all_but_zero) 
   b = XmlSimple.xml_in(b.to_s, 'normalisespace' => eq_all_but_zero) 
   a == b
 end
 
-# doing this tests that the content is the same regardless of attribute order etc. 
-def xml_should_be_same(expected, actual)
-  expected = Hpricot(expected)
+def json_cmp(a, b)
+  raise "Not Implemented"
+end
+
+def xml_should_eql_fixture(actual, name, key)
+  expected = Hpricot(xml_fixture(name)[key])
   actual = Hpricot(actual)
   
-  blame = "\n\n#################### expected\n#{expected.to_html}\n\n" "#################### actual:\n#{actual.to_html}\n\n" 
-  (xml_cmp(expected, actual)).should.blaming(blame).equal true
+  xml_should_eql(actual, expected)
 end
+
+# doing this tests that the content is the same regardless of attribute order etc. 
+def xml_should_eql(actual, expected)
+  same = xml_cmp(expected, actual)
+  actual.should.== expected unless same  
+end
+
+# doing this tests that the content is the same regardless of attribute order etc. 
+def json_should_eql(actual, name, key)
+  expected = json_fixture(name)[key]
+
+  same = json_cmp(expected, actual)
+  actual.should.== expected unless same 
+end
+
+def file_fixture(name)
+  template = File.open(RESTFUL_ROOT.join("test", "fixtures", name)).read
+  fixture = ERB.new(template).result(binding)
+  yaml = YAML.load(fixture)
+  yaml.symbolize_keys
+end
+
+def xml_fixture(name); file_fixture("#{ name }.xml.yaml"); end
+def json_fixture(name); file_fixture("#{ name }.json.yaml"); end

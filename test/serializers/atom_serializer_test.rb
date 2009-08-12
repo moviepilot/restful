@@ -18,40 +18,16 @@ context "params serializer" do
   end
 
   specify "serialize to xml, atom style" do
-    actual = @person.to_restful.serialize(:atom_like)
-
-    expected = <<EXPECTED    
-<?xml version="1.0" encoding="UTF-8"?>
-<person xml:base="http://example.com:3000">
-  <created-at>#{ @person.created_at.xmlschema }</created-at>
-  <link rel="self" href="/people/#{ @person.id }"/>
-  <name>Joe Bloggs</name>
-  <current-location>Under a tree</current-location>
-  <pets>
-    <pet>
-      <link rel="self" href="/pets/#{ @pet.id }"/>
-      <name>mietze</name>
-    </pet>
-  </pets>
-  <wallet>
-    <link rel="self" href="/wallets/#{ @wallet.id }"/>
-    <contents>an old photo, 5 euros in coins</contents>
-  </wallet>
-</person>
-EXPECTED
-
-    xml_should_be_same(expected, actual)
+    xml_should_eql_fixture(@person.to_restful_atom_like, "people", :atom_person)
   end
-
-
-specify "deserialize from atom style xml" do
-  restful = @pet.to_restful
-  expected = restful.serialize(:atom_like)
-  serializer = Restful::Serializers::AtomLikeSerializer.new
-  resource = serializer.deserialize(expected)
-  actual = serializer.serialize(resource)
   
-  xml_should_be_same(expected, actual)
-end
-
+  specify "deserialize from atom style xml" do
+    restful = @pet.to_restful
+    expected = restful.serialize(:atom_like)
+    serializer = Restful::Serializers::AtomLikeSerializer.new
+    resource = serializer.deserialize(expected)
+    actual = serializer.serialize(resource)
+  
+    xml_should_eql(expected, actual)
+  end
 end
