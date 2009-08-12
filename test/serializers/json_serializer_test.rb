@@ -13,11 +13,9 @@ context "json serializer" do
     @person.save
   end
   
-  teardown do
-    reset_config
-  end
-  
-  xspecify "serialize to json" do
-    json_should_eql(@person.to_restful_json, "people", :bloggs)
+  teardown { reset_config }
+
+  specify "serialize to json" do
+    json_should_eql_fixture(@person.to_restful_json, "people", :bloggs)
   end
 end

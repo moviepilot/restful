@@ -1,12 +1,16 @@
-bloggs:
+bloggs: 
   |
-    expected = 
-      {
-        :restful_url => "http://example.com:3000/people/#{ @person.id }",
-        :name => "Joe Bloggs",
-        :current_location => "Under a tree",
-        :created_at => @person.created_at.xmlschema,
-        :wallet=>{:contents=>"an old photo, 5 euros in coins"},
-        :pets => [ {:name => "mietze"} ]
-      }
-    
+    { 
+      "restful_url": "http://example.com:3000/people/<%= @person.to_param %>",
+      "wallet": { 
+        "restful_url": "http://example.com:3000/wallets/<%= @person.wallet.to_param %>",
+        "contents": "an old photo, 5 euros in coins" 
+      },
+      "current_location": "Under a tree",
+      "name": "Joe Bloggs",
+      "pets": [ { 
+        "restful_url": "http://example.com:3000/pets/<%= @person.pets.first.to_param %>", 
+        "name": "mietze" 
+       }],
+      "created_at": "<%= @person.created_at.xmlschema %>"
+    }

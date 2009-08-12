@@ -9,6 +9,7 @@ require 'hpricot'
 require 'xmlsimple'
 require 'yajl'
 require 'pathname'
+require 'stringio'
 
 plugin_test = Pathname.new(File.dirname(__FILE__))
 plugin_root = plugin_test.join '..'
@@ -73,7 +74,7 @@ def reset_config
   Wallet.restful_config = Restful.cfg  
 end
 
-def xml_cmp(a, b)
+def xml_cmp(actual, expected)
   eq_all_but_zero = Object.new.instance_eval do
     def ==(other)
       Integer(other) == 0 ? false : true
@@ -81,13 +82,16 @@ def xml_cmp(a, b)
     self
   end
   
-  a = XmlSimple.xml_in(a.to_s, 'normalisespace' => eq_all_but_zero) 
-  b = XmlSimple.xml_in(b.to_s, 'normalisespace' => eq_all_but_zero) 
-  a == b
+  actual = XmlSimple.xml_in(actual.to_s, 'normalisespace' => eq_all_but_zero) 
+  expected = XmlSimple.xml_in(expected.to_s, 'normalisespace' => eq_all_but_zero) 
+  actual == expected
 end
 
-def json_cmp(a, b)
-  raise "Not Implemented"
+def json_cmp(actual, expected)
+  actual = Yajl::Parser.parse(actual)
+  expected = Yajl::Parser.parse(expected)
+  
+  actual == expected
 end
 
 def xml_should_eql_fixture(actual, name, key)
@@ -99,15 +103,18 @@ end
 
 # doing this tests that the content is the same regardless of attribute order etc. 
 def xml_should_eql(actual, expected)
-  same = xml_cmp(expected, actual)
+  same = xml_cmp(actual, expected)
   actual.should.== expected unless same  
 end
 
-# doing this tests that the content is the same regardless of attribute order etc. 
-def json_should_eql(actual, name, key)
+def json_should_eql_fixture(actual, name, key)  
   expected = json_fixture(name)[key]
+  json_should_eql(actual, expected)
+end
 
-  same = json_cmp(expected, actual)
+# doing this tests that the content is the same regardless of attribute order etc. 
+def json_should_eql(actual, expected)
+  same = json_cmp(actual, expected)
   actual.should.== expected unless same 
 end
 
