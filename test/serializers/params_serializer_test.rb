@@ -50,14 +50,4 @@ EXPECTED
     clone.species.should.== 123
     clone.person_id.should.== @person.id
   end
-  
-  specify "deserialize from params" do
-    restful = @person.to_restful
-    expected = restful.serialize(:params)
-    serializer = Restful::Serializers::ParamsSerializer.new
-    resource = serializer.deserialize(expected)
-    actual = Person.create(expected).to_restful.serialize(:params)
-  
-    actual.should.== expected
-  end
 end

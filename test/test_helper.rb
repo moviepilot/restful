@@ -11,6 +11,7 @@ require 'test/spec'
 require 'mocha'
 require 'hpricot'
 require 'xmlsimple'
+require 'yajl'
 
 $:.unshift plugin_lib, plugin_test
 

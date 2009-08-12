@@ -52,7 +52,9 @@ module Restful
         def add_link_to(resource, builder, options = {})
           is_self = !!options[:self]
           
-          builder.tag!((is_self ? "restful-url" : transform_link_name(resource.name)), resource.full_url, :type => "link")
+          attributes = {:type => "link"}
+          attributes.merge!(:nil => "true") if resource.full_url.blank?
+          builder.tag!((is_self ? "restful-url" : transform_link_name(resource.name)), resource.full_url, attributes)
         end
       
         def add_tag(builder, value)

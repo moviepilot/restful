@@ -13,7 +13,7 @@ Aims to provide a production quality Rest API to your Rails app, with the follow
 # Serializers
 
 Getting started
-===============
+============================
 In order to make your models apiable add
 
 `apiable`

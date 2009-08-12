@@ -8,6 +8,7 @@ require 'restful/apimodel/attribute'
 require 'restful/apimodel/collection'
 require 'restful/apimodel/link'
 require 'restful/serializers/xml_serializer'
+require 'restful/serializers/json_serializer'
 require 'restful/serializers/atom_like_serializer'
 require 'restful/serializers/params_serializer'
 

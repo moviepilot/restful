@@ -21,6 +21,14 @@ context "active record converter" do
     @pet.to_restful.links.map { |node| node.name }.sort.should.equal [:person_id]
   end
   
+  specify "should convert a NULL inner association such as person.wallet to a link with a null value" do
+    @person.wallet = nil
+    
+    wallet = @person.to_restful(:restful_options => { :expansion => :collapsed }).links.select { |link| link.name == "wallet-restful-url" }.first
+    wallet.should.not.== nil
+    wallet.value.should.== nil
+  end
+  
   specify "should return plain attributes from a model" do
     @pet.to_restful.simple_attributes.map { |node| node.name }.should.equal [:name]
   end

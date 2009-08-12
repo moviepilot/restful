@@ -1,14 +1,14 @@
 require 'restful/serializers/base'
-require 'builder'
+require 'yajl'
 
 #
 #  AR params hash.
 #
 module Restful
   module Serializers
-    class ParamsSerializer < Base
+    class JsonSerializer < Base
       
-      serializer_name :params
+      serializer_name :json
       
       def serialize(resource, options = {})
         params = {}
@@ -23,17 +23,24 @@ module Restful
               array << serialize(resource)
             end              
             
-            params["#{value.name.to_sym}_attributes".to_sym] = array
+            params["#{value.name}".to_sym] = array
           elsif value.type == :link
             params[value.name] = Restful::Rails.tools.dereference(value.value)
           elsif value.type == :resource
-            params["#{value.name.to_sym}_attributes".to_sym] = serialize(value)
+            params["#{value.name}".to_sym] = serialize(value)
           else # plain ole
-            params[value.name] = value.value
+            string_value = case value.extended_type
+            when :datetime
+              value.value.xmlschema
+            else
+              value.value
+            end
+            
+            params[value.name] = string_value
           end
         end
         
-        params
+        Yajl::Encoder.encode(params)
       end
     end
   end

@@ -26,6 +26,10 @@ context "Configuration" do
     config = Restful.cfg(:one, :two => [:a, :b])
     config.nested(:two).whitelisted.should.== [:a,:b]
   end
+  
+  specify "should set restful options when set in to_restful method" do
+    
+  end
 
   specify "should know which attributes are published" do
     config = Restful.cfg(:one, :two => [:a, :b])
