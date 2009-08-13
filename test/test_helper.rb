@@ -90,8 +90,23 @@ end
 def json_cmp(actual, expected)
   actual = Yajl::Parser.parse(actual)
   expected = Yajl::Parser.parse(expected)
-  
+  puts_hash_diff actual, expected
   actual == expected
+end
+
+def puts_hash_diff(hash1, hash2, indent = 0)
+  return if hash1 == hash2
+  
+  (hash1.keys + hash2.keys).uniq.each do |key|
+    next if hash1[key] == hash2[key]
+    print "  "*indent
+    if hash1[key].is_a? Hash or hash2[key].is_a? Hash
+      puts "=== #{key} is a Hash ==="
+      puts_hash_diff(hash1[key] || {}, hash2[key] || {}, indent+2)
+    else
+      printf "%-#{20-indent}s %#{50-indent}s != %-50s\n", key[0..19], hash1[key], hash2[key]
+    end
+  end
 end
 
 def xml_should_eql_fixture(actual, name, key)
