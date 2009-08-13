@@ -13,6 +13,10 @@ class Person < ActiveRecord::Base
     "Hi. I'm currently in #{ current_location }"
   end  
   
+  def has_pets
+    pets.size > 0
+  end
+  
   def pets_ages_hash
    returning pets_hash = {} do
      pets.each do |pet|

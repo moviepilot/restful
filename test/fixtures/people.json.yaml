@@ -41,6 +41,19 @@ bloggs_with_pets_ages_hash:
         "motze": 100
       }
     }
+bloggs_with_has_pets:
+  |
+    { 
+      "restful_url": "http://example.com:3000/people/<%= @person.to_param %>",
+      "has_pets": true
+    }
+bloggs_with_hasno_pets:
+  |
+    { 
+      "restful_url": "http://example.com:3000/people/<%= @person.to_param %>",
+      "has_pets": false
+    }
+
 
 bloggs_da_pet_hater:
   |
