@@ -8,7 +8,7 @@ context "active record converter" do
     Person.restful_publish(:name, :wallet, :current_location, :pets => [:name, :species])
     Pet.restful_publish(:person_id, :name) # person_id gets converted to a link automagically.
     
-    @person = Person.create(:name => "Joe Bloggs", :current_location => "Under a tree")
+    @person = Person.create(:name => "Joe Bloggs", :current_location => "Under a tree", :birthday => "1976-04-03")
     @wallet = @person.wallet = Wallet.create!(:contents => "something in the wallet")
     @pet = @person.pets.create(:name => "Mietze", :species => "cat")
   end
@@ -36,6 +36,11 @@ context "active record converter" do
   specify "should return collections attributes from a model" do
     restful = @person.to_restful
     restful.collections.map { |node| node.name }.sort.should.equal [:pets]
+  end
+  
+  specify "should set correct type for date" do
+    restful = @person.to_restful :birthday
+    restful.simple_attributes.detect { |node| node.name == :birthday }.extended_type.should.== :date
   end
   
   specify "should be able to convert themselves to an apimodel containing all and only the attributes exposed by Model.publish_api" do    

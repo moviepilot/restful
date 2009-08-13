@@ -7,7 +7,7 @@ context "params serializer" do
     Pet.restful_publish(:name)
     Wallet.restful_publish(:contents)
     
-    @person = Person.create(:name => "Joe Bloggs", :current_location => "Under a tree")
+    @person = Person.create(:name => "Joe Bloggs", :current_location => "Under a tree", :birthday => "1942-01-11")
     @pet = @person.pets.create(:species => "cat", :age => 200, :name => "mietze")
     @wallet = @person.wallet = Wallet.new(:contents => "an old photo, 5 euros in coins")
     @person.save
@@ -31,6 +31,14 @@ context "params serializer" do
       actual = @person.to_restful.serialize :params
       actual.should.== expected
     end
+  end
+  
+  specify "should render correct date" do
+    actual = @person.to_restful(:birthday).serialize(:params)
+    
+    expected = { :birthday => @person.birthday.to_s(:db) }
+    
+    Person.create(expected).birthday.should.== @person.birthday
   end
   
   specify "serialize to params" do

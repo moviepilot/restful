@@ -7,7 +7,7 @@ context "json serializer" do
     Pet.restful_publish(:name)
     Wallet.restful_publish(:contents)
     
-    @person = Person.create(:name => "Joe Bloggs", :current_location => "Under a tree")
+    @person = Person.create(:name => "Joe Bloggs", :current_location => "Under a tree", :birthday => "2009-09-19")
     @pet = @person.pets.create(:species => "cat", :age => 200, :name => "mietze")
     @wallet = @person.wallet = Wallet.new(:contents => "an old photo, 5 euros in coins")
     @person.save
@@ -24,6 +24,10 @@ context "json serializer" do
     assert_nothing_raised do
       json_should_eql_fixture(@person.to_restful_json, "people", :bloggs_da_pet_hater)
     end
+  end
+
+  specify "should serialize date type correctly" do
+    json_should_eql_fixture(@person.to_restful_json(:birthday), "people", :bloggs_with_birthday)  
   end
   
   specify "should not ever use dashes as hash keys but underscores" do

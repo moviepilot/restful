@@ -43,6 +43,7 @@ silence_stream(STDOUT) do
       t.string :name
       t.string :current_location
       t.string :biography
+      t.date   :birthday
 
       t.timestamp :created_at      
       t.timestamp :updated_at

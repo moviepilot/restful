@@ -37,7 +37,15 @@ with_oldest_pet_species:
         <species type="integer"><%= @person.oldest_pet.species %></species>
       </oldest-pet>
     </person>
-    
+
+joe_with_birthday:
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <person>
+      <restful-url type="link">http://example.com:3000/people/<%= @person.id %></restful-url>
+      <birthday type="date"><%= @person.birthday.to_s(:db) %></birthday>
+    </person>
+
 joe_with_zwiebelleder:    
   |
     <?xml version="1.0" encoding="UTF-8"?>

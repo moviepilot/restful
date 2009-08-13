@@ -33,6 +33,8 @@ module Restful
             string_value = case value.extended_type
             when :datetime
               value.value.xmlschema
+            when :date
+              value.value.to_s(:db)
             else
               value.value
             end

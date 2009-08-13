@@ -120,7 +120,7 @@ module Restful
             when :time 
               :datetime
             when :date
-              :datetime
+              :date
             else
               type_symbol
             end
