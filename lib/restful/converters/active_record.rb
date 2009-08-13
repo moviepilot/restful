@@ -74,18 +74,18 @@ module Restful
         resource.values += (model.public_methods - Restful::Rails.tools.simple_attributes_on(model).keys.map(&:to_s)).map do |method_name|
           if config.published?(method_name.to_sym) and not published.include?(method_name.to_sym)
             value = model.send(method_name.to_sym)
-              sanitzed_method_name = method_name.tr("!?", "").tr("_", "-").to_sym
+              sanitized_method_name = method_name.tr("!?", "").tr("_", "-").to_sym
               
               if value.is_a? ::ActiveRecord::Base
                 if config.expanded? && !nested
                   returning Restful::Rails.tools.expand(value, config.nested(method_name.to_sym)) do |expanded|
-                    expanded.name = sanitzed_method_name
+                    expanded.name = sanitized_method_name
                   end
                 else
-                  Restful.link("#{ sanitzed_method_name }-restful-url", Restful::Rails.api_hostname, value ? value.restful_path : "", compute_extended_type(model, key))
+                  Restful.link("#{ sanitized_method_name }-restful-url", Restful::Rails.api_hostname, value ? value.restful_path : "", compute_extended_type(model, key))
                 end
               else
-                Restful.attr(sanitzed_method_name, value, compute_extended_type(model, method_name))
+                Restful.attr(sanitized_method_name, value, compute_extended_type(model, method_name))
               end
           end
         end.compact
