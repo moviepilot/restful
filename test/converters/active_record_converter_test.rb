@@ -17,6 +17,14 @@ context "active record converter" do
     reset_config
   end
   
+  specify "should be able to force expansion. force expanded attributes can never be collapsed. " do
+    Wallet.restful_publish(:contents)
+    Person.restful_publish(:name, :wallet, :current_location, { :pets => [:name, :species], :restful_options => { :force_expand => :wallet } })
+    Pet.restful_publish(:owner, :name)
+
+    @pet.to_restful
+  end
+  
   specify "should return link attributes from a model" do
     @pet.to_restful.links.map { |node| node.name }.sort.should.equal [:person_id]
   end
