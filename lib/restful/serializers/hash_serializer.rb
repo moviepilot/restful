@@ -8,6 +8,7 @@ module Restful
     class HashSerializer < Base
       
       serializer_name :hash
+
       
       def serialize(resource, options = {})
         params = {}
@@ -15,10 +16,13 @@ module Restful
         resource.values.each do |value|
           if value.type == :collection # serialize the stuffs
             resources = value.value
+            next if resources.empty?
             name = resources.first.name.pluralize
             
             array = []
-            resources.each { |r| array << serialize(r) } 
+            resources.each do |r|
+              array << serialize(r)
+            end
             
             params["#{value.name}".to_sym] = array
           elsif value.type == :link

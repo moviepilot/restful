@@ -17,7 +17,7 @@ context "params serializer" do
     reset_config
   end
   
-  specify "should be able to serialize empty collection" do
+  specify "should be able to serialize objects empty collections" do
     @person.pets = []
     expected = 
       {
@@ -27,11 +27,10 @@ context "params serializer" do
         :wallet_attributes=>{:contents=>"an old photo, 5 euros in coins"}
       }
 
-    actual = ''
     assert_nothing_raised do
       actual = @person.to_restful.serialize :params
+      actual.should.== expected
     end
-    actual.should.== expected
   end
   
   specify "serialize to params" do

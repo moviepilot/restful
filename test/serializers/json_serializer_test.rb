@@ -18,4 +18,12 @@ context "json serializer" do
   specify "serialize to json" do
     json_should_eql_fixture(@person.to_restful_json, "people", :bloggs)
   end
+  
+  specify "should be able to serialize objects with empty collections" do
+    @person.pets = []
+    assert_nothing_raised do
+      json_should_eql_fixture(@person.to_restful_json, "people", :bloggs_da_pet_hater)
+    end
+  end
+  
 end
