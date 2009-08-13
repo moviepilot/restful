@@ -110,4 +110,14 @@ with_pets_and_expanded_wallet:
         <contents>an old photo, 5 euros in coins</contents>
       </wallet>
     </person>
-  
+    
+hashy_person:
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <person>
+      <restful-url type="link">http://example.com:3000/people/<%= @person.id %></restful-url>
+      <pets-ages-hash>
+        <mietze>200</mietze>
+        <motze>100</motze>
+      </pets-ages-hash>
+    </person>

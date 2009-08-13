@@ -39,4 +39,9 @@ context "params serializer" do
   specify "serialize to xml, rails style" do
     xml_should_eql_fixture(@person.to_restful_xml, "people", :with_pets_and_expanded_wallet)
   end
+  
+  specify "should serialize hashes correctly" do
+    @person.pets.create(:species => "cat", :age => 100, :name => "motze")
+    xml_should_eql_fixture(@person.to_restful_xml(:pets_ages_hash), "people", :hashy_person)
+  end
 end

@@ -30,16 +30,7 @@ module Restful
           elsif value.type == :resource
             params[hashify_key(value.name)] = serialize(value)
           else # plain ole
-            string_value = case value.extended_type
-              when :datetime
-                value.value.xmlschema
-              when :date
-                value.value.to_s(:db)
-              else
-                value.value
-            end
-
-            params[hashify_key(value.name)] = formatted_value(string_value)
+            params[hashify_key(value.name)] = formatted_value(value)
           end
         end
         

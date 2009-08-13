@@ -58,11 +58,20 @@ module Restful
         end
       
         def add_tag(builder, value)
-          builder.tag!(
-            value.name.to_s.dasherize,
-            formatted_value(value),
-            decorations(value)
-          )
+
+          if value.extended_type == :hash
+            build_hash(builder, value)
+          else
+            builder.tag!(value.name.to_s.dasherize, formatted_value(value), decorations(value))
+          end
+        end
+        
+        def build_hash(builder, value)
+          builder.tag!(value.name.to_s.dasherize) do
+            value.value.each do |k, v|
+              builder.tag! k.to_s.dasherize, v
+            end            
+          end
         end
         
         def decorations(value)
