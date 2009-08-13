@@ -119,6 +119,8 @@ module Restful
               :string
             when :time 
               :datetime
+            when :date
+              :datetime
             else
               type_symbol
             end
