@@ -39,7 +39,7 @@ module Restful
                 value.value
             end
 
-            params[hashify_key(value.name)] = string_value
+            params[hashify_key(value.name)] = formatted_value(string_value)
           end
         end
         
