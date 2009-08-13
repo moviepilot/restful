@@ -48,6 +48,14 @@ context "params serializer" do
     actual.should.== expected
   end
   
+  specify "use correct key names for method that include '-' character" do
+    actual = @person.to_restful(:oldest_pet).serialize(:params)
+    
+    expected = { :oldest_pet_attributes => {:name => "mietze"} }
+    
+    actual.should.== expected
+  end
+  
   specify "serialize to an ar params hash" do    
     input = xml_fixture("pets")[:gracie]
     params = Restful.from_xml(input).serialize(:params)

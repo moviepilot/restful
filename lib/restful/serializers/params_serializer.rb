@@ -12,7 +12,6 @@ module Restful
       
       def serialize(resource, options = {})
         params = {}
-        
         resource.values.each do |value|
           if value.type == :collection # serialize the stuffs
             resources = value.value
@@ -24,18 +23,24 @@ module Restful
               array << serialize(resource)
             end              
             
-            params["#{value.name.to_sym}_attributes".to_sym] = array
+            params["#{paramify_keys(value.name)}_attributes".to_sym] = array
           elsif value.type == :link
-            params[value.name] = Restful::Rails.tools.dereference(value.value)
+            params[paramify_keys(value.name).to_sym] = Restful::Rails.tools.dereference(value.value)
           elsif value.type == :resource
-            params["#{value.name.to_sym}_attributes".to_sym] = serialize(value)
+            params["#{paramify_keys(value.name)}_attributes".to_sym] = serialize(value)
           else # plain ole
-            params[value.name] = value.value
+            params[paramify_keys(value.name).to_sym] = value.value
           end
         end
         
         params
       end
-    end
+      
+      private
+      
+      def paramify_keys(original_key)
+        original_key.to_s.tr("-", "_")
+      end
+    end    
   end
 end

@@ -15,15 +15,25 @@ bloggs:
       "created_at": "<%= @person.created_at.xmlschema %>"
     }
 
+bloggs_with_oldest_pet:
+  |
+    { 
+       "restful_url": "http://example.com:3000/people/<%= @person.to_param %>",
+       "oldest_pet": { 
+         "restful_url": "http://example.com:3000/pets/<%= @person.pets.first.to_param %>", 
+         "name": "mietze" 
+       }
+    }
+
 bloggs_da_pet_hater:
   |
-  { 
-    "restful_url": "http://example.com:3000/people/<%= @person.to_param %>",
-    "wallet": { 
-      "restful_url": "http://example.com:3000/wallets/<%= @person.wallet.to_param %>",
-      "contents": "an old photo, 5 euros in coins" 
-    },
-    "current_location": "Under a tree",
-    "name": "Joe Bloggs",
-    "created_at": "<%= @person.created_at.xmlschema %>"
-  }
+    { 
+      "restful_url": "http://example.com:3000/people/<%= @person.to_param %>",
+      "wallet": { 
+        "restful_url": "http://example.com:3000/wallets/<%= @person.wallet.to_param %>",
+        "contents": "an old photo, 5 euros in coins" 
+      },
+      "current_location": "Under a tree",
+      "name": "Joe Bloggs",
+      "created_at": "<%= @person.created_at.xmlschema %>"
+    }

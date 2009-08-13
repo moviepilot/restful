@@ -24,11 +24,11 @@ module Restful
               array << serialize(r)
             end
             
-            params["#{value.name}".to_sym] = array
+            params[hashify_key(value.name)] = array
           elsif value.type == :link
-            params[value.name] = Restful::Rails.tools.dereference(value.value)
+            params[hashify_key(value.name)] = Restful::Rails.tools.dereference(value.value)
           elsif value.type == :resource
-            params["#{value.name}".to_sym] = serialize(value)
+            params[hashify_key(value.name)] = serialize(value)
           else # plain ole
             string_value = case value.extended_type
             when :datetime
@@ -37,13 +37,18 @@ module Restful
               value.value
             end
             
-            params[value.name] = string_value
+            params[hashify_key(value.name)] = string_value
           end
         end
         
         params["restful_url"] = resource.full_url
         params
       end
+      
+      private
+        def hashify_key(original_key)
+          original_key.to_s.tr("-", "_").to_sym
+        end
     end
   end
 end

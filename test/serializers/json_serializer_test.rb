@@ -26,4 +26,10 @@ context "json serializer" do
     end
   end
   
+  specify "should not ever use dashes as hash keys but underscores" do
+    assert_nothing_raised do
+      json_should_eql_fixture(@person.to_restful_json(:oldest_pet), "people", :bloggs_with_oldest_pet)
+    end
+  end
+    
 end
