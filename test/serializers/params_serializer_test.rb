@@ -17,6 +17,23 @@ context "params serializer" do
     reset_config
   end
   
+  specify "should be able to serialize empty collection" do
+    @person.pets = []
+    expected = 
+      {
+        :name => "Joe Bloggs",
+        :current_location => "Under a tree",
+        :created_at => @person.created_at,
+        :wallet_attributes=>{:contents=>"an old photo, 5 euros in coins"}
+      }
+
+    actual = ''
+    assert_nothing_raised do
+      actual = @person.to_restful.serialize :params
+    end
+    actual.should.== expected
+  end
+  
   specify "serialize to params" do
     actual = @person.to_restful.serialize(:params)
   

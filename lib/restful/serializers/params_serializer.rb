@@ -16,6 +16,7 @@ module Restful
         resource.values.each do |value|
           if value.type == :collection # serialize the stuffs
             resources = value.value
+            next if resources.empty?
             name = resources.first.name.pluralize
             
             array = []
