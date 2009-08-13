@@ -42,6 +42,7 @@ module Restful
             end
             
             config.whitelisted = self.class.restful_config.whitelisted if config.whitelisted.empty?
+            config.restful_options.merge! self.class.restful_config.restful_options
             
             Restful::Converters::ActiveRecord.convert(self, config)
           end
@@ -75,9 +76,14 @@ module Restful
             @whitelisted.include?(key) || !!@whitelisted.select { |field| field.is_a?(Hash)  && field.keys.include?(key) }.first
           end
 
-          def expanded? # if nothing was set, this defaults to true. 
-            @restful_options[:expansion] != :collapsed
-          end       
+          def expanded?(key, nested = false) # if nothing was set, this defaults to true. 
+            force_expanded?(key) || (@restful_options[:expansion] != :collapsed && !nested)
+          end
+          
+          def force_expanded?(key)
+            force = [*@restful_options[:force_expand]]
+            force.include?(key)
+          end
 
           def nested?
             !!restful_options[:nested]

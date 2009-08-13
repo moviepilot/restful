@@ -15,7 +15,6 @@ module Restful
             :path => model.restful_path,
             :url => model.restful_url
         })
-        
                 
         # simple attributes
         resource.values += Restful::Rails.tools.simple_attributes_on(model).map do |attribute|
@@ -41,7 +40,7 @@ module Restful
               end
             elsif model.class.reflections[key].macro == :has_one or model.class.reflections[key].macro == :belongs_to
 
-              if(config.expanded? && !nested) 
+              if(config.expanded?(key, nested)) 
                 convert_to_collection(model, key, nested_config, published) do |key, resources, extended_type|
                   returning(resources.first) do |res|
                     res.name = key
@@ -77,7 +76,7 @@ module Restful
               sanitized_method_name = method_name.tr("!?", "").tr("_", "-").to_sym
               
               if value.is_a? ::ActiveRecord::Base
-                if config.expanded? && !nested
+                if config.expanded?(method_name.to_sym, nested)
                   returning Restful::Rails.tools.expand(value, config.nested(method_name.to_sym)) do |expanded|
                     expanded.name = sanitized_method_name
                   end

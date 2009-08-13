@@ -93,6 +93,10 @@ module Restful
             decorations[:nil] = true
           end
           
+          if value.value.is_a?(FalseClass) || value.value.is_a?(TrueClass)
+            decorations[:type] = :boolean
+          end
+
           decorations
         end
         
