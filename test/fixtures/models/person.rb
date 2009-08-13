@@ -13,5 +13,13 @@ class Person < ActiveRecord::Base
     "Hi. I'm currently in #{ current_location }"
   end  
   
+  def pets_ages_hash
+   returning pets_hash = {} do
+     pets.each do |pet|
+       pets_hash[pet.name] = pet.age
+     end
+   end
+  end
+  
   apiable
 end

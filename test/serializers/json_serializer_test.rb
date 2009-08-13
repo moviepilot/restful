@@ -30,10 +30,17 @@ context "json serializer" do
     json_should_eql_fixture(@person.to_restful_json(:birthday), "people", :bloggs_with_birthday)  
   end
   
+  specify "should serialize hashes correctly" do
+    @person.pets.create(:species => "cat", :age => 100, :name => "motze")
+    json_should_eql_fixture(@person.to_restful_json(:pets_ages_hash), "people", :bloggs_with_pets_ages_hash)
+  end
+  
   specify "should not ever use dashes as hash keys but underscores" do
     assert_nothing_raised do
       json_should_eql_fixture(@person.to_restful_json(:oldest_pet), "people", :bloggs_with_oldest_pet)
     end
   end
+  
+
     
 end
