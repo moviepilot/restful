@@ -32,10 +32,11 @@ context "json serializer" do
   
   specify "should not bug out on nil values in date fields" do
     person = Person.create :created_at => nil, :birthday => nil, :last_login => nil
-    expected = "{\"restful_url\": \"http://example.com:3000/people/#{person.to_param}\"}"
+    person.created_at = nil
+    expected = "{\"birthday\":null,\"restful_url\":\"http://example.com:3000/people/#{person.to_param}\",\"last_login\":null,\"created_at\":null}"
     assert_nothing_raised do
-      actual = @person.to_restful_json([:created_at, :birthday, :last_login])
-      json_should_eql_(expected, actual)
+      actual = person.to_restful_json([:created_at, :birthday, :last_login])
+      json_should_eql(actual, expected)
     end
   end
   

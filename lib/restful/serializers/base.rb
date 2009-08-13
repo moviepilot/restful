@@ -29,6 +29,7 @@ module Restful
       end
       
       def formatted_value(value)
+        return nil if value.value.blank?
         case value.extended_type
         when :datetime
           value.value.xmlschema
