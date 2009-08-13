@@ -29,7 +29,7 @@ module Restful
           elsif value.type == :resource
             params["#{paramify_keys(value.name)}_attributes".to_sym] = serialize(value)
           else # plain ole
-            params[paramify_keys(value.name).to_sym] = value.value
+            params[paramify_keys(value.name).to_sym] = value.value # no need to format dates etc - just pass objects through. 
           end
         end
         

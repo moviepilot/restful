@@ -58,16 +58,9 @@ module Restful
         end
       
         def add_tag(builder, value)
-          string_value = case value.extended_type
-          when :datetime
-            value.value.xmlschema
-          else
-            value.value.to_s
-          end
-          
           builder.tag!(
             value.name.to_s.dasherize,
-            string_value,
+            formatted_value(value),
             decorations(value)
           )
         end

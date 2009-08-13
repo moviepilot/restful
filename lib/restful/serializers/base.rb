@@ -28,6 +28,19 @@ module Restful
         self.serializers[key] = self
       end
       
+      def formatted_value(value)
+        case value.extended_type
+        when :datetime
+          value.value.xmlschema
+        when :time
+          value.value.xmlschema
+        when :date
+          value.value.to_s(:db)
+        else
+          value.value
+        end        
+      end
+      
       protected
         def transform_link_name(name)
           name.to_s.gsub /_id$/, "-restful-url"
