@@ -10,11 +10,9 @@ module Restful
       serializer_name :hash
       
       def serialize(resource, options = {})
-        if resource.is_a?(Restful::ApiModel::Collection)
-          serialize_array(resource.value)
-        else
+        resource.is_a?(Restful::ApiModel::Collection) ?
+          serialize_array(resource.value) :
           serialize_collection(resource)
-        end
       end
       
       private      
@@ -23,15 +21,15 @@ module Restful
           original_key.to_s.tr("-", "_").to_sym
         end
         
+        def serialize_array(resources)
+          resources.map { |r| serialize(r) }
+        end
+
         def serialize_collection(resource)
           resource.values.inject({ "restful_url" => resource.full_url }) do |params, value|
             params[hashify_key(value.name)] = serialize_value(value)
             params
           end
-        end
-        
-        def serialize_array(resources)
-          resources.map { |r| serialize(r) }
         end
         
         def serialize_value(value)
