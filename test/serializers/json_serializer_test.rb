@@ -30,9 +30,26 @@ context "json serializer" do
     json_should_eql_fixture(@person.to_restful_json(:birthday), "people", :bloggs_with_birthday)  
   end
   
+  specify "should not bug out on nil values in date fields" do
+    person = Person.create :created_at => nil, :birthday => nil, :last_login => nil
+    person.created_at = nil
+    expected = "{\"birthday\":null,\"restful_url\":\"http://example.com:3000/people/#{person.to_param}\",\"last_login\":null,\"created_at\":null}"
+    assert_nothing_raised do
+      actual = person.to_restful_json([:created_at, :birthday, :last_login])
+      json_should_eql(actual, expected)
+    end
+  end
+  
   specify "should serialize hashes correctly" do
     @person.pets.create(:species => "cat", :age => 100, :name => "motze")
     json_should_eql_fixture(@person.to_restful_json(:pets_ages_hash), "people", :bloggs_with_pets_ages_hash)
+  end
+  
+  specify "should render boolean values correctly" do
+    json_should_eql_fixture(@person.to_restful_json(:has_pets), "people", :bloggs_with_has_pets)
+    @person.pets = []
+    @person.save!
+    json_should_eql_fixture(@person.to_restful_json(:has_pets), "people", :bloggs_with_hasno_pets)
   end
   
   specify "should not ever use dashes as hash keys but underscores" do
