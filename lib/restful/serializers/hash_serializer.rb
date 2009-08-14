@@ -13,10 +13,7 @@ module Restful
         if resource.is_a?(Restful::ApiModel::Collection)
           serialize_array(resource.value)
         else
-          resource.values.inject({ "restful_url" => resource.full_url }) do |params, value|
-            params[hashify_key(value.name)] = serialize_value(value)
-            params
-          end
+          serialize_collection(resource)
         end
       end
       
@@ -24,6 +21,13 @@ module Restful
       
         def hashify_key(original_key)
           original_key.to_s.tr("-", "_").to_sym
+        end
+        
+        def serialize_collection(resource)
+          resource.values.inject({ "restful_url" => resource.full_url }) do |params, value|
+            params[hashify_key(value.name)] = serialize_value(value)
+            params
+          end
         end
         
         def serialize_array(resources)
