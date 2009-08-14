@@ -50,13 +50,18 @@ module Restful
             
             # array
             if self.is_a?(Array)
-              elements = self.map do |el| 
+              elements = self.map do |el|
                 raise TypeError.new("Not all array elements respond to #to_restful. ") unless el.respond_to?(:to_restful)
                 Restful::Converters::ActiveRecord.convert(el, el.class.restful_config)
               end
               
               element_name = elements.first ? elements.first.name.pluralize : "nil-classes"
-              Restful.collection(element_name, elements, :array)
+              
+              collection = returning Restful.collection(element_name, elements, :array) do |collection|
+                collection.total_entries = self.total_entries if self.respond_to?(:total_entries)
+              end          
+
+              collection    
             else
               Restful::Converters::ActiveRecord.convert(self, config)
             end
@@ -137,3 +142,4 @@ end
 
 ActiveRecord::Base.send :include, Restful::Rails::ActiveRecord::Configuration
 Array.send :include, Restful::Rails::ActiveRecord::Configuration::CommonInstanceMethods
+Hash.send :include, Restful::Rails::ActiveRecord::Configuration::CommonInstanceMethods

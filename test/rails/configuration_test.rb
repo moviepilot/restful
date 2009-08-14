@@ -41,5 +41,4 @@ context "Configuration" do
     config = Restful.cfg(:one, :restful_options => {:nested => true})
     config.nested?.should.== true
   end
-  
 end

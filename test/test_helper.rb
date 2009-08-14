@@ -64,6 +64,7 @@ require plugin_root.join 'init'
 require 'fixtures/models/pet'
 require 'fixtures/models/wallet'
 require 'fixtures/models/person'
+require 'fixtures/models/paginated_collection'
 
 Restful::Rails.api_hostname = "http://example.com:3000"
 

@@ -6,3 +6,15 @@ pets_array:
           "name": "mietze"
         }
       ]
+      
+pets_array_with_total_entries:
+    |
+      {
+        "total_entries": 1001,
+        "pets": [
+          {
+            "restful_url": "http://example.com:3000/pets/<%= @person.pets.first.to_param %>", 
+            "name": "mietze"
+          }      
+        ]
+      }

@@ -17,6 +17,6 @@ module Restful
     def self.tools
       Restful::Rails::ActiveRecord::MetadataTools::Utils
     end
-    
+
   end
 end

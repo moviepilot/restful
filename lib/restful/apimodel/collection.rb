@@ -4,6 +4,8 @@
 module Restful
   module ApiModel
     class Collection < Attribute
+      attr_accessor :total_entries
+      
       def initialize(name, resources, extended_type)
         super
         

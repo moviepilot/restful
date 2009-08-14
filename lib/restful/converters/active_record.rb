@@ -9,17 +9,17 @@ module Restful
         nested = config.nested?
 
         resource = Restful.resource(
-          model.class.to_s.tableize.demodulize.singularize, { 
-            :base => Restful::Rails.api_hostname, 
+          model.class.to_s.tableize.demodulize.singularize, {
+            :base => Restful::Rails.api_hostname,
             :path => model.restful_path,
             :url => model.restful_url
         })
         
         # simple attributes
-        resource.values += Restful::Rails.tools.simple_attributes_on(model).map do |key, value|          
+        resource.values += Restful::Rails.tools.simple_attributes_on(model).map do |key, value|
           convert_to_simple_attribute(key, value, config, published, model)
         end.compact
-
+        
         # has_many, has_one
         resource.values += model.class.reflections.keys.map do |key|
           if config.published?(key.to_sym)

@@ -118,4 +118,5 @@ context "active record converter" do
 
     xml_should_eql_fixture(@person.to_restful_xml(:wallet), "people", :joe_with_zwiebelleder)
   end
+  
 end

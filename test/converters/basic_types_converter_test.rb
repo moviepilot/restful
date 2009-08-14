@@ -24,4 +24,13 @@ context "basic types converter" do
     collection.value.size.should.== 1
     collection.value.first.simple_attributes.first.value.should.== "Joe Bloggs"
   end  
+  
+  specify "should set total_entries on the restful collection if the array responds to this" do
+    Person.restful_publish(:name)
+    people = PaginatedCollection.new([Person.create(:name => "Joe Bloggs")])
+    people.total_entries = 1001
+
+    collection = people.to_restful
+    collection.total_entries.should.== 1001
+  end
 end

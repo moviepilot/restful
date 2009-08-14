@@ -21,6 +21,7 @@ context "json serializer" do
   
   specify "should be able to serialize objects with empty collections" do
     @person.pets = []
+    
     assert_nothing_raised do
       json_should_eql_fixture(@person.to_restful_json, "people", :bloggs_da_pet_hater)
     end
@@ -61,4 +62,11 @@ context "json serializer" do
   specify "should serialize collections correctly" do
     json_should_eql_fixture(@person.pets.to_restful_json, "pets", :pets_array)
   end    
+  
+  specify "should be able to serialize collections with total entries info" do
+    pets = PaginatedCollection.new(@person.pets)
+    pets.total_entries = 1001
+
+    json_should_eql_fixture(pets.to_restful_json, "pets", :pets_array_with_total_entries)
+  end
 end
