@@ -1,5 +1,3 @@
-puts "hallo"
-
 #
 #  Collection model. A collection is a named array of Resources. 
 #
