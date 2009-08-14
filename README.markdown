@@ -31,8 +31,7 @@ Some example configurations:
 restful_publish :name, :pets, :restful_options => { :expansion => :expanded } # default on level 1-2: expanded. default above: collapsed. 
 restful_publish :name, :pets, :wallet => :contents, :restful_options => { :expansion => :expanded } # combined options and expansion rules
 restful_publish :name, :pets, :restful_options => { :collapsed => :pets } # collapsed pets, even though they are on the second level. 
-restful_publish :name, :pets, :restful_options => { :expanded => [:pets, :wallet] }
-restful_publish :name, :pets, :restful_options => { :pets_page => 1, :pets_per_page => 100, :collapsed => :pets }
+restful_publish :name, :pets, :restful_options => { :force_expanded => [:pets, :wallet] }
 
 # Pet
 restful_publish :name, :person # expands person per default because it is on the second level. Does not expand person.pets.first.person, since this is higher than second level.
@@ -42,7 +41,9 @@ Rails-like
 
 This format sticks to xml_simple, adding links as `<association-name-restful-url>` nodes of type "link".
 
-`Person.last.to_restful.serialize(:xml)` results in something like...
+
+`Person.last.to_restful.serialize(:xml)` OR
+`Person.last.to_restful_xml` results in something like...
 
   <?xml version="1.0" encoding="UTF-8"?>
   <person>
@@ -66,7 +67,8 @@ This format sticks to xml_simple, adding links as `<association-name-restful-url
 Atom-like
 =========
 
-`Person.last.to_restful.serialize(:atom_like)` results in something like...
+`Person.last.to_restful.serialize(:atom_like)` OR
+`Person.last.to_restful_atom_like` results in something like...
 
   <?xml version="1.0" encoding="UTF-8"?>
   <person xml:base="http://example.com:3000">
@@ -89,13 +91,19 @@ Atom-like
 Params-like
 ===========
 
-`Person.last.to_restful.serialize(:params)` results in something like...
+`Person.last.to_restful.serialize(:params)` OR
+`Person.last.to_restful_params` results in something like...
 
   {:sex_attributes => {:sex=>"male"},
    :current_location=>"Under a tree",
    :name=>"Joe Bloggs",
    :pets_attributes=> [ {:person_id=>1, :name=>nil} ] 
   }
+  
+Other Serializers
+=================
+
+Hash. Spits out a plain ole hash, no nested attributes or such like. Useful for further conversions. 
 
 Deserializing
 =============
@@ -105,4 +113,4 @@ Use `Restful.from_atom_like(xml).serialize(:hash)` to convert from an atom-like 
 Nested Attributes
 =================
 Serializing uses Rails 2.3 notation of nested attributes. For deserializing you will need Rails 2.3 for having nested attributes support and the respective model must have the 
-`accepts_nested_attributes_for :<table name>` set accordingly
+`accepts_nested_attributes_for :<table name>` set accordingly.
