@@ -65,5 +65,6 @@ bloggs_da_pet_hater:
       },
       "current_location": "Under a tree",
       "name": "Joe Bloggs",
+      "pets": [],
       "created_at": "<%= @person.created_at.xmlschema %>"
     }
