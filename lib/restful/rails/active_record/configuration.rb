@@ -8,7 +8,8 @@ module Restful
         def self.included(base)
           base.send :class_inheritable_accessor, :restful_config
           base.restful_config = Config.new
-          base.send :include, InstanceMethods
+          base.send :include, ResourceInstanceMethods
+          base.send :include, CommonInstanceMethods
           base.extend(ClassMethods)
         end
         
@@ -27,26 +28,50 @@ module Restful
             self.restful_config = Restful.cfg(*fieldnames)
           end
         end
-    
-        module InstanceMethods
-          
+        
+        module CommonInstanceMethods
           #
           #  converts this AR object to an apimodel object. per default, only the
           #  attributes in self.class.restful_config are shown. this can be overriden
           #  by passing in something like @pet.to_restful(:name, :species).
           #
-          def to_restful(config = self.class.restful_config)
-
+          def to_restful(config = nil)
+            config ||= self.class.restful_config if self.class.respond_to?(:restful_config)
+            config ||= []
+            
             if config && !config.is_a?(Config)
              config = Config.new(config)
             end
             
-            config.whitelisted = self.class.restful_config.whitelisted if config.whitelisted.empty?
-            config.restful_options.merge! self.class.restful_config.restful_options
+            if self.class.respond_to?(:restful_config)
+              config.whitelisted = self.class.restful_config.whitelisted if config.whitelisted.empty?
+              config.restful_options.merge! self.class.restful_config.restful_options
+            end
             
-            Restful::Converters::ActiveRecord.convert(self, config)
+            # array
+            if self.is_a?(Array)
+              elements = self.map do |el| 
+                raise TypeError.new("Not all array elements respond to #to_restful. ") unless el.respond_to?(:to_restful)
+                Restful::Converters::ActiveRecord.convert(el, el.class.restful_config)
+              end
+              
+              element_name = elements.first ? elements.first.name.pluralize : "nil-classes"
+              Restful.collection(element_name, elements, :array)
+            else
+              Restful::Converters::ActiveRecord.convert(self, config)
+            end
           end
           
+          # FIXME: read Restful::Serializers::Base.serializers. Load order problems?
+          [:xml, :json, :atom_like].each do |format|
+            define_method("to_restful_#{ format }") do |*args|
+              self.to_restful(*args).serialize(format)
+            end            
+          end
+        end
+    
+        module ResourceInstanceMethods
+                    
           # simple method through which a model should know it's own name. override this where necessary. 
           def restful_url(url_base = Restful::Rails.api_hostname)
             "#{ url_base }#{ restful_path }"
@@ -54,13 +79,6 @@ module Restful
           
           def restful_path
             "/#{ self.class.to_s.tableize }/#{ self.to_param }"
-          end
-          
-          # FIXME: read out Restful::Serializers::Base.serializers. Load order problems?
-          [:xml, :json, :atom_like].each do |format|
-            define_method("to_restful_#{ format }") do |*args|
-              self.to_restful(*args).serialize(format)
-            end            
           end
         end
         
@@ -118,3 +136,4 @@ module Restful
 end
 
 ActiveRecord::Base.send :include, Restful::Rails::ActiveRecord::Configuration
+Array.send :include, Restful::Rails::ActiveRecord::Configuration::CommonInstanceMethods

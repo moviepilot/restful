@@ -5,7 +5,6 @@ module Restful
   module Converters
     class ActiveRecord
       def self.convert(model, config, options = {})
-
         published = []
         nested = config.nested?
 
@@ -15,15 +14,10 @@ module Restful
             :path => model.restful_path,
             :url => model.restful_url
         })
-                
+        
         # simple attributes
-        resource.values += Restful::Rails.tools.simple_attributes_on(model).map do |attribute|
-          key, value = attribute
-          
-          if config.published?(key.to_sym)
-            published << key.to_sym
-            Restful.attr(key.to_sym, value, compute_extended_type(model, key))
-          end
+        resource.values += Restful::Rails.tools.simple_attributes_on(model).map do |key, value|          
+          convert_to_simple_attribute(key, value, config, published, model)
         end.compact
 
         # has_many, has_one
@@ -90,6 +84,14 @@ module Restful
         end.compact
         
         resource
+      end
+
+      def self.convert_to_simple_attribute(key, value, config,  published, model = nil)
+        if config.published?(key.to_sym)
+          published << key.to_sym
+          ext_type = (model ? compute_extended_type(model, key) : value.class.to_s.underscore.to_sym)
+          Restful.attr(key.to_sym, value, ext_type)
+        end
       end
       
       private
