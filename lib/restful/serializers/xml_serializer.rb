@@ -13,33 +13,29 @@ module Restful
       serializer_name :xml
       
       def serialize(resource, options = {})
+          
         xml = options[:builder] || Builder::XmlMarkup.new(:indent => 2)
         xml.instruct! unless options[:instruct].is_a?(FalseClass)
         
-        xml.tag!(*root_element(resource)) do
-          add_link_to(resource, xml, :self => true)
-                    
-          resource.values.each do |value|
-            
-            if value.type == :collection # serialize the stuffs
-              resources = value.value
-              if first_resource = resources.first
-                xml.tag!(first_resource.name.pluralize, collections_decorations) do
-                  resources.each do |resource|
-                    serialize(resource,  { :instruct => false, :builder => xml })
-                  end              
-                end
+        if resource.is_a?(Restful::ApiModel::Collection)
+          add_collection(resource, xml, show_as_array = false)
+        else        
+          xml.tag!(*root_element(resource)) do
+            add_link_to(resource, xml, :self => true)
+
+            resource.values.each do |value|
+              if value.type == :collection # serialize the stuffs
+                add_collection(value, xml)
+              elsif value.type == :link
+                add_link_to(value, xml)
+              elsif value.type == :resource
+                serialize(value, {:instruct => false, :builder => xml})
+              else # plain ole
+                add_tag(xml, value)
               end
-              
-            elsif value.type == :link
-              add_link_to(value, xml)
-            elsif value.type == :resource
-              serialize(value, {:instruct => false, :builder => xml})
-            else # plain ole
-              add_tag(xml, value)
             end
-          end
-        end       
+          end       
+        end
       end
       
       # returns a resource, or collection of resources. 
@@ -48,6 +44,17 @@ module Restful
       end
       
       protected
+      
+        def add_collection(value, xml, show_as_array = true)
+          resources = value.value
+          if first_resource = resources.first
+            xml.tag!(first_resource.name.pluralize, (show_as_array ? collections_decorations : {})) do
+              resources.each do |resource|
+                serialize(resource,  { :instruct => false, :builder => xml })
+              end              
+            end
+          end
+        end
       
         def add_link_to(resource, builder, options = {})
           is_self = !!options[:self]

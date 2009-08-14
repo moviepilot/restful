@@ -58,6 +58,7 @@ context "json serializer" do
     end
   end
   
-
-    
+  specify "should serialize collections correctly" do
+    json_should_eql_fixture(@person.pets.to_restful_json, "pets", :pets_array)
+  end    
 end

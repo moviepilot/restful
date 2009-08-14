@@ -19,3 +19,13 @@ gracie:
       <species>123</species>
       <name>Gracie</name>
     </pet>
+    
+pets_array:
+  |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <pets>
+      <pet>
+        <restful-url type="link">http://example.com:3000/pets/<%= @pet.id %></restful-url>
+        <name>mietze</name>
+      </pet>
+    </pets>
