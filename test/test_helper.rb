@@ -99,7 +99,7 @@ end
 def puts_hash_diff(hash1, hash2, indent = 0)
   return if hash1 == hash2
   
-  (hash1.keys + hash2.keys).uniq.each do |key|
+  ((hash1 || {}).keys + (hash2 || {}).keys).uniq.each do |key|
     next if hash1[key] == hash2[key]
     print "  "*indent
     if hash1[key].is_a? Hash or hash2[key].is_a? Hash
