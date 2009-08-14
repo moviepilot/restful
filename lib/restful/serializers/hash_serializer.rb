@@ -11,36 +11,34 @@ module Restful
 
       
       def serialize(resource, options = {})
-        params = {}
-        
+        params = { "restful_url" => resource.full_url }
         resource.values.each do |value|
-          if value.type == :collection # serialize the stuffs
-            resources = value.value
-            next if resources.empty?
-            name = resources.first.name.pluralize
-            
-            array = []
-            resources.each do |r|
-              array << serialize(r)
-            end
-            
-            params[hashify_key(value.name)] = array
-          elsif value.type == :link
-            params[hashify_key(value.name)] = Restful::Rails.tools.dereference(value.value)
-          elsif value.type == :resource
-            params[hashify_key(value.name)] = serialize(value)
-          else # plain ole
-            params[hashify_key(value.name)] = formatted_value(value)
-          end
+          params[hashify_key(value.name)] = serialize_value(value)
         end
-        
-        params["restful_url"] = resource.full_url
         params
       end
       
       private
+      
         def hashify_key(original_key)
           original_key.to_s.tr("-", "_").to_sym
+        end
+        
+        def serialize_value(value)
+          case value.type
+            when :collection then serialize_collection(value.value)
+            when :link       then Restful::Rails.tools.dereference(value.value)
+            when :resource   then serialize(value)
+            else                  formatted_value(value)
+          end
+        end
+        
+        def serialize_collection(resources)
+          returning [] do |array|
+            resources.each do |r|
+              array << serialize(r)
+            end
+          end
         end
     end
   end
