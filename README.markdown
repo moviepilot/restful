@@ -36,6 +36,13 @@ restful_publish :name, :pets, :restful_options => { :force_expanded => [:pets, :
 # Pet
 restful_publish :name, :person # expands person per default because it is on the second level. Does not expand person.pets.first.person, since this is higher than second level.
 
+Options
+=======
+
+You can add includes to your call like this: 
+
+pet.to_restful_json :include => :owner. 
+
 Rails-like
 ==========
 

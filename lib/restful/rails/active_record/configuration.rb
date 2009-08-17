@@ -36,6 +36,13 @@ module Restful
           #  by passing in something like @pet.to_restful(:name, :species).
           #
           def to_restful(config = nil)
+            add_to_whitelist = []
+
+            if config && config.is_a?(Hash) && config.keys.size == 1 && includes = config[:include] 
+              add_to_whitelist = [*includes]
+              config = nil
+            end
+            
             config ||= self.class.restful_config if self.class.respond_to?(:restful_config)
             config ||= []
             
@@ -47,6 +54,8 @@ module Restful
               config.whitelisted = self.class.restful_config.whitelisted if config.whitelisted.empty?
               config.restful_options.merge! self.class.restful_config.restful_options
             end
+            
+            config.whitelisted += add_to_whitelist
             
             # array
             if self.is_a?(Array)

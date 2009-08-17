@@ -16,15 +16,15 @@ module Restful
       end
       
       def links
-        values.select { |attribute| attribute.type == :link }
+        self.values.select { |attribute| attribute.type == :link }
       end
       
       def simple_attributes
-        values.select { |attribute| attribute.type == :simple_attribute }        
+        self.values.select { |attribute| attribute.type == :simple_attribute }        
       end
       
       def collections
-        values.select { |attribute| attribute.type == :collection }
+        self.values.select { |attribute| attribute.type == :collection }
       end
       
       # invoke serialization
