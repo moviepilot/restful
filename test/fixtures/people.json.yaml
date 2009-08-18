@@ -72,9 +72,23 @@ bloggs_da_pet_hater:
 hash_with_person:
   |
     { 
-      "total_hits": 10, 
+      "total_hits": 1, 
       "a_person": {
         "restful_url": "http://example.com:3000/people/<%= @person.to_param %>",
         "name": "Joe Bloggs"
       }
+    }
+    
+hash_with_people:
+  |
+    { 
+      "total_hits": 2, 
+      "people": [{
+        "restful_url": "http://example.com:3000/people/<%= @person.to_param %>",
+        "name": "Joe Bloggs"
+      },
+      {
+        "restful_url": "http://example.com:3000/people/<%= @person.to_param %>",
+        "name": "Joe Bloggs"
+      }]
     }

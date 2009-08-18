@@ -73,7 +73,11 @@ module Restful
                         
             elsif self.is_a?(Hash)
               elements = self.map do |k,v|
-                value = v.respond_to?(:to_restful) ? Restful::Converters::ActiveRecord.convert(v, v.class.restful_config) : v
+                if v.respond_to?(:to_restful) and v.class.respond_to?(:restful_config)
+                  value = Restful::Converters::ActiveRecord.convert(v, v.class.restful_config)
+                else
+                  value =  v.respond_to?(:to_restful) ? v.to_restful : v
+                end
                 Restful::ApiModel::Attribute.new(k, value, :map)
               end
               
