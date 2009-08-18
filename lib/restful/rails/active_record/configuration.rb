@@ -35,7 +35,8 @@ module Restful
           #  attributes in self.class.restful_config are shown. this can be overriden
           #  by passing in something like @pet.to_restful(:name, :species).
           #
-          def to_restful(config = nil)
+          def to_restful(config_parameter = nil)
+            config = config_parameter
             add_to_whitelist = []
 
             if config && config.is_a?(Hash) && config.keys.size == 1 && includes = config[:include] 
@@ -62,7 +63,7 @@ module Restful
             if self.is_a?(Array)
               elements = self.map do |el|
                 raise TypeError.new("Not all array elements respond to #to_restful. ") unless el.respond_to?(:to_restful)
-                Restful::Converters::ActiveRecord.convert(el, el.class.restful_config)
+                Restful::Converters::ActiveRecord.convert(el, !config_parameter.nil? ? Config.new(config_parameter) : el.class.restful_config)
               end
               
               element_name = elements.first ? elements.first.name.pluralize : "nil-classes"
@@ -74,7 +75,7 @@ module Restful
             elsif self.is_a?(Hash)
               elements = self.map do |k,v|
                 if v.respond_to?(:to_restful) and v.class.respond_to?(:restful_config)
-                  value = Restful::Converters::ActiveRecord.convert(v, v.class.restful_config)
+                  value = Restful::Converters::ActiveRecord.convert(v, !config_parameter.nil? ? Config.new(config_parameter) : v.class.restful_config)
                 else
                   value =  v.respond_to?(:to_restful) ? v.to_restful : v
                 end
