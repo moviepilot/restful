@@ -26,6 +26,7 @@ context "restful publish" do
     @pet = @person.pets.create(:name => "Mietze")
 
     @pet.to_restful(:include => :owner).values.map(&:name).should.include :owner
+    Pet.restful_config.whitelisted.should.not.include? :owner
   end
 end
 

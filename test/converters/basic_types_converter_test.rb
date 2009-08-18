@@ -33,4 +33,16 @@ context "basic types converter" do
     collection = people.to_restful
     collection.total_entries.should.== 1001
   end
+  
+  specify "should be able to convert a hash to a resource map" do
+    Person.restful_publish(:name)
+    resource = { "zeperson" => @person = Person.create(:name => "fuddzle") }.to_restful
+    resource.should.is_a?(Restful::ApiModel::Map)
+    
+    attrs = resource.simple_attributes
+    attrs.size.should.== 1
+    attrs.first.name.should.== "zeperson"
+    
+    attrs.first.value.values.first.value.== "fuddzle"
+  end
 end

@@ -69,4 +69,9 @@ context "json serializer" do
 
     json_should_eql_fixture(pets.to_restful_json, "pets", :pets_array_with_total_entries)
   end
+  
+  specify "should be able to serialize a map" do
+    Person.restful_publish(:name)
+    json_should_eql_fixture({ "total_hits" => 10, "a_person" => @person }.to_restful_json, "people", :hash_with_person)
+  end
 end

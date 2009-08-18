@@ -10,9 +10,13 @@ module Restful
       serializer_name :hash
       
       def serialize(resource, options = {})
-        resource.is_a?(Restful::ApiModel::Collection) ?
-          serialize_collection(resource) :
+        case resource
+        when Restful::ApiModel::Collection then serialize_collection(resource)
+        when Restful::ApiModel::Resource   then serialize_tuples(resource.values, resource.full_url)
+        when Restful::ApiModel::Map        then serialize_map(resource)
+        else
           serialize_tuples(resource.values, resource.full_url)
+        end
       end
 
       private      
@@ -25,6 +29,13 @@ module Restful
           end
         
           values
+        end
+        
+        def serialize_map(map)
+          map.values.inject({}) do |memo, attribute|
+            memo[attribute.name] = serialize_value(attribute.value)
+            memo
+          end
         end
         
         def serialize_tuples(tuples, url)

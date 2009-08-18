@@ -17,6 +17,8 @@ module Restful
         xml = options[:builder] || Builder::XmlMarkup.new(:indent => 2)
         xml.instruct! unless options[:instruct].is_a?(FalseClass)
         
+        raise NotImplementedError.new("xml serialization of maps has not been implemented. ") if resource.class == Restful::ApiModel::Map
+        
         if resource.is_a?(Restful::ApiModel::Collection)
           add_collection(resource, xml, show_as_array = false)
         else        

@@ -6,3 +6,4 @@ Refactor this shice. Seriously, this has devolved into some nasty-ass code.
 * remove xml serialization here and test resource directly (in active_record_converter_test)
 * get rid of to_a warning
 * convert underscores to dashes (or not) in serializers instead of converter
+* implement xml serialization of hashes

@@ -39,11 +39,11 @@ module Restful
             add_to_whitelist = []
 
             if config && config.is_a?(Hash) && config.keys.size == 1 && includes = config[:include] 
-              add_to_whitelist = [*includes]
+              add_to_whitelist = [*includes].map { |el| el.is_a?(String) ? el.to_sym : el  }
               config = nil
             end
             
-            config ||= self.class.restful_config if self.class.respond_to?(:restful_config)
+            config ||= self.class.restful_config.clone if self.class.respond_to?(:restful_config)
             config ||= []
             
             if config && !config.is_a?(Config)
@@ -51,11 +51,12 @@ module Restful
             end
             
             if self.class.respond_to?(:restful_config)
-              config.whitelisted = self.class.restful_config.whitelisted if config.whitelisted.empty?
+              config.whitelisted = Array.new(self.class.restful_config.whitelisted) if config.whitelisted.empty?
               config.restful_options.merge! self.class.restful_config.restful_options
             end
             
             config.whitelisted += add_to_whitelist
+            config.whitelisted = config.whitelisted.uniq
             
             # array
             if self.is_a?(Array)
@@ -66,11 +67,19 @@ module Restful
               
               element_name = elements.first ? elements.first.name.pluralize : "nil-classes"
               
-              collection = returning Restful.collection(element_name, elements, :array) do |collection|
+              returning Restful.collection(element_name, elements, :array) do |collection|
                 collection.total_entries = self.total_entries if self.respond_to?(:total_entries)
-              end          
-
-              collection    
+              end
+                        
+            elsif self.is_a?(Hash)
+              elements = self.map do |k,v|
+                value = v.respond_to?(:to_restful) ? Restful::Converters::ActiveRecord.convert(v, v.class.restful_config) : v
+                Restful::ApiModel::Attribute.new(k, value, :map)
+              end
+              
+              map = Restful::ApiModel::Map.new("hash")
+              map.values =  elements
+              map
             else
               Restful::Converters::ActiveRecord.convert(self, config)
             end
