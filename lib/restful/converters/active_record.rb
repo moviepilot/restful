@@ -24,10 +24,9 @@ module Restful
           convert_to_simple_attribute(key, value, config, published, model)
         end.compact
         
-        # has_many, has_one
+        # has_many, has_one, belongs_to
         resource.values += model.class.reflections.keys.map do |key|
           explicit_link = !!explicit_links.include?(key)
-
           if config.published?(key.to_sym) || explicit_link
             
             nested_config = config.nested(key.to_sym)
@@ -38,7 +37,6 @@ module Restful
                 Restful.collection(key, resources, extended_type)
               end
             elsif has_one?(model, key) or belongs_to?(model, key)
-
               if config.expanded?(key, nested) && !explicit_link
                 convert_to_collection(model, key, nested_config, published) do |key, resources, extended_type|
                   returning(resources.first) do |res|
@@ -67,10 +65,10 @@ module Restful
         
         # public methods
         resource.values += (model.public_methods - Restful::Rails.tools.simple_attributes_on(model).keys.map(&:to_s)).map do |method_name|
-
+        
           explicit_link = !!explicit_links.include?(method_name.to_sym)          
           
-          if (config.published?(method_name.to_sym) && !published.include?(method_name.to_sym)) || explicit_link
+          if !published.include?(method_name.to_sym) && (config.published?(method_name.to_sym) || explicit_link)
             value = model.send(method_name.to_sym)
               sanitized_method_name = method_name.tr("!?", "").tr("_", "-").to_sym
               

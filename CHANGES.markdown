@@ -7,6 +7,6 @@
 * fixed issue where configurations where overwriting each other. 
 * added hash#to_restful
 
-19. Aug 2009 - 0.2.11
+19. Aug 2009 - 0.2.12
 
 * added ability to publish :wallet-restful-url (explicitly collapsed)

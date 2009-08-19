@@ -91,7 +91,7 @@ module Restful
           end
           
           # FIXME: read Restful::Serializers::Base.serializers. Load order problems?
-          [:xml, :json, :atom_like].each do |format|
+          [:atom_like, :hash, :json, :params, :xml].each do |format|
             define_method("to_restful_#{ format }") do |*args|
               self.to_restful(*args).serialize(format)
             end            

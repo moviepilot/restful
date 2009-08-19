@@ -54,14 +54,16 @@ module Restful
           end
           
           def self.dereference(url)
-            regexp = Regexp.new("#{ Restful::Rails.api_hostname }\/(.*)\/(.*)")
-            m, resource, params = *url.match(regexp)
-            resource = if resource && params
-              clazz = resource.try(:singularize).try(:camelize).try(:constantize)
-              clazz.find_by_restful(params) if clazz 
-            end
+            if url
+              regexp = Regexp.new("#{ Restful::Rails.api_hostname }\/(.*)\/(.*)")
+              m, resource, params = *url.match(regexp)
+              resource = if resource && params
+                clazz = resource.try(:singularize).try(:camelize).try(:constantize)
+                clazz.find_by_restful(params) if clazz 
+              end
 
-            resource ? resource.id : 0
+              resource.id if resource
+            end
           end
           
           # retruns non association / collection attributes. 
