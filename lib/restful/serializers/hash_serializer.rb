@@ -48,7 +48,7 @@ module Restful
         def serialize_value(value)
           case value.type
             when :collection then serialize_collection(value)
-            when :link       then Restful::Rails.tools.dereference(value.value)
+            when :link       then value.value
             when :resource   then serialize(value)
             else                  formatted_value(value)
           end
