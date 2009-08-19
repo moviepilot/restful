@@ -17,6 +17,16 @@ context "active record converter" do
     reset_config
   end
   
+  specify "should publish link and not resource when :oldest_pet_restful_url, where oldest_pet is a defined method" do
+    Person.restful_publish(:oldest_pet_restful_url)  
+    @person.to_restful.links.should.not.be.empty
+  end
+  
+  specify "should publish link and not a nested resource with :wallet_restful_url" do
+    Person.restful_publish(:wallet_restful_url)  
+    @person.to_restful.links.should.not.be.empty
+  end
+  
   specify "should be able to force expansion. force expanded attributes can never be collapsed. " do
     Wallet.restful_publish(:contents)
     Person.restful_publish(:name, :wallet, :current_location, { :pets => [:name, :species], :restful_options => { :force_expand => :wallet } })

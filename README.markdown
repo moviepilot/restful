@@ -33,6 +33,9 @@ restful_publish :name, :pets, :wallet => :contents, :restful_options => { :expan
 restful_publish :name, :pets, :restful_options => { :collapsed => :pets } # collapsed pets, even though they are on the second level. 
 restful_publish :name, :pets, :restful_options => { :force_expanded => [:pets, :wallet] }
 
+## explicitly collapsed
+restful_options :wallet-restful-url
+
 # Pet
 restful_publish :name, :person # expands person per default because it is on the second level. Does not expand person.pets.first.person, since this is higher than second level.
 

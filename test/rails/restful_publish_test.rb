@@ -4,7 +4,7 @@ context "restful publish" do
   teardown do
     reset_config
   end
-   
+      
   specify "should result in a method .published?(:attr_key) return true for published attributes" do
     Pet.restful_publish(:person_id, :name) # person_id gets converted to a link automagically.
     
