@@ -10,3 +10,7 @@
 19. Aug 2009 - 0.2.12
 
 * added ability to publish :wallet-restful-url (explicitly collapsed)
+
+20. Aug 2009 - 0.2.13
+
+* hash serializer no longer dereferences ids
