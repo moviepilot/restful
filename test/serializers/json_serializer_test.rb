@@ -46,6 +46,12 @@ context "json serializer" do
     json_should_eql_fixture(@person.to_restful_json(:pets_ages_hash), "people", :bloggs_with_pets_ages_hash)
   end
   
+  specify 'should serialize a hash with include option correctly - the include option should be passed to the values' do
+    hash = {:person => @person}
+    flunk
+    # hash.to_restful_json(:include => :wallet) should include the expanded wallet in the json
+  end
+  
   specify "should render boolean values correctly" do
     json_should_eql_fixture(@person.to_restful_json(:has_pets), "people", :bloggs_with_has_pets)
     @person.pets = []
