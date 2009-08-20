@@ -22,3 +22,7 @@
     * arrays names now use base_class of content models
     * restful_path defaults to using base_class in path
     * if array responds to name, use this as collection name
+
+  - 0.2.15
+
+    * :includes like active record to_xml to_json
