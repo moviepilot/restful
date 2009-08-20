@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper.rb'
 
 context "json serializer" do
-  
+
   setup do 
     Person.restful_publish(:name, :current_location, :pets, :wallet, :created_at)
     Pet.restful_publish(:name)
@@ -46,12 +46,6 @@ context "json serializer" do
     json_should_eql_fixture(@person.to_restful_json(:pets_ages_hash), "people", :bloggs_with_pets_ages_hash)
   end
   
-  specify 'should serialize a hash with include option correctly - the include option should be passed to the values' do
-    hash = {:person => @person}
-    flunk
-    # hash.to_restful_json(:include => :wallet) should include the expanded wallet in the json
-  end
-  
   specify "should render boolean values correctly" do
     json_should_eql_fixture(@person.to_restful_json(:has_pets), "people", :bloggs_with_has_pets)
     @person.pets = []
@@ -72,7 +66,7 @@ context "json serializer" do
   specify "should be able to serialize collections with total entries info" do
     pets = PaginatedCollection.new(@person.pets)
     pets.total_entries = 1001
-
+    
     json_should_eql_fixture(pets.to_restful_json, "pets", :pets_array_with_total_entries)
   end
   
@@ -84,5 +78,13 @@ context "json serializer" do
   specify "should be able to serialize a map with arrays as values" do
     Person.restful_publish(:name)
     json_should_eql_fixture({ "total_hits" => 2, "people" => [ @person, @person ] }.to_restful_json, "people", :hash_with_people)
+  end
+
+  specify 'should serialize a hash with include option correctly - the include option should be passed to the values' do
+    Person.restful_publish(:name)
+    Wallet.restful_publish(:contents)
+    
+    json = {:person => @person}.to_restful_json(:include => :wallet)
+    json_should_eql_fixture(json, "people", :hash_with_rich_person)
   end
 end

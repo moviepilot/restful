@@ -4,6 +4,32 @@
 module Restful
   module Rails
     module ActiveRecord
+      module Utils
+        
+        def self.get_includes(config)
+          if config && config.is_a?(Hash) && config.keys.size == 1 && includes = config[:include] 
+            add_to_whitelist = [*includes].map { |el| el.is_a?(String) ? el.to_sym : el  }
+            return nil, add_to_whitelist
+          else
+            return config, []
+          end
+        end
+        
+        def self.convert_to_single_resource(config_parameter, el)
+          config = if config_parameter
+            returning Configuration::Config.new(config_parameter) do |c|
+              config, includes = Utils.get_includes(config_parameter)
+              c.whitelisted += el.class.restful_config.whitelisted unless config
+              c.whitelisted += includes unless includes.blank?
+            end
+          else
+            el.class.restful_config
+          end
+          
+          Restful::Converters::ActiveRecord.convert(el, config)
+        end  
+      end
+      
       module Configuration
         def self.included(base)
           base.send :class_inheritable_accessor, :restful_config
@@ -36,13 +62,7 @@ module Restful
           #  by passing in something like @pet.to_restful(:name, :species).
           #
           def to_restful(config_parameter = nil)
-            config = config_parameter
-            add_to_whitelist = []
-
-            if config && config.is_a?(Hash) && config.keys.size == 1 && includes = config[:include] 
-              add_to_whitelist = [*includes].map { |el| el.is_a?(String) ? el.to_sym : el  }
-              config = nil
-            end
+            config, add_to_whitelist = Utils.get_includes(config_parameter)
             
             config ||= self.class.restful_config.clone if self.class.respond_to?(:restful_config)
             config ||= []
@@ -73,7 +93,7 @@ module Restful
 
               elements = self.map do |el|
                 raise TypeError.new("Not all array elements respond to #to_restful. ") unless el.respond_to?(:to_restful)
-                Restful::Converters::ActiveRecord.convert(el, !config_parameter.nil? ? Config.new(config_parameter) : el.class.restful_config)
+                Utils.convert_to_single_resource(config_parameter, el)
               end
               
               returning Restful.collection(element_name, elements, :array) do |collection|
@@ -81,11 +101,12 @@ module Restful
               end
                         
             elsif self.is_a?(Hash)
+              
               elements = self.map do |k,v|
-                if v.respond_to?(:to_restful) and v.class.respond_to?(:restful_config)
-                  value = Restful::Converters::ActiveRecord.convert(v, !config_parameter.nil? ? Config.new(config_parameter) : v.class.restful_config)
+                value = if v.respond_to?(:to_restful) and v.class.respond_to?(:restful_config)
+                  Utils.convert_to_single_resource(config_parameter, v)
                 else
-                  value =  v.respond_to?(:to_restful) ? v.to_restful : v
+                  v.respond_to?(:to_restful) ? v.to_restful : v
                 end
                 Restful::ApiModel::Attribute.new(k, value, :map)
               end
@@ -97,7 +118,7 @@ module Restful
               Restful::Converters::ActiveRecord.convert(self, config)
             end
           end
-          
+                    
           # FIXME: read Restful::Serializers::Base.serializers. Load order problems?
           [:atom_like, :hash, :json, :params, :xml].each do |format|
             define_method("to_restful_#{ format }") do |*args|
@@ -149,7 +170,7 @@ module Restful
           end
 
           private
-          
+                    
             def split_into_whitelist_and_restful_options(array)
               options = {}
         

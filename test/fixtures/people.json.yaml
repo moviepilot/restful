@@ -92,3 +92,16 @@ hash_with_people:
         "name": "Joe Bloggs"
       }]
     }
+
+hash_with_rich_person:
+  |
+    {
+      "person": {
+        "restful_url": "http://example.com:3000/people/<%= @person.to_param %>",
+        "name": "Joe Bloggs", 
+        "wallet": {
+          "restful_url": "http://example.com:3000/wallets/<%= @person.wallet.to_param %>",
+          "contents": "<%= @person.wallet.contents %>"
+        }
+      }
+    }

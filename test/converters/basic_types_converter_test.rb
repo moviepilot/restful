@@ -67,3 +67,33 @@ context "basic types converter" do
     collection.name.should.== "people"
   end
 end
+
+context "basic types converter :includes" do
+  
+  specify "should include extra attributes for hashes" do
+    Person.restful_publish(:name)
+    Pet.restful_publish(:name)
+    
+    @person = Person.create
+    @pet = @person.pets.create(:name => "Mietze")
+
+    map = { :pet => @pet }.to_restful(:include => :owner)
+    map.values.first.name.should.== :pet
+    map.values.first.value.values.map(&:name).should.include :owner
+    
+    Pet.restful_config.whitelisted.include?(:owner).should.equal false
+  end
+  
+  specify "should include extra attributes for arrays" do
+    Person.restful_publish(:name)
+    Pet.restful_publish(:name)
+    
+    @person = Person.create
+    @pet = @person.pets.create(:name => "Mietze")
+
+    collection = [@pet].to_restful(:include => :owner)
+    collection.value.first.values.map(&:name).should.include :owner
+    
+    Pet.restful_config.whitelisted.include?(:owner).should.equal false
+  end
+end

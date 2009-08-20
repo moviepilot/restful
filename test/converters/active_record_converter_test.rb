@@ -131,5 +131,17 @@ context "active record converter" do
 
     xml_should_eql_fixture(@person.to_restful_xml(:wallet), "people", :joe_with_zwiebelleder)
   end
+
+  specify "should include attributes when include parameter is passed to to_restful" do
+    Person.restful_publish(:name)
+    Pet.restful_publish(:name)
+    
+    @person = Person.create
+    @pet = @person.pets.create(:name => "Mietze")
+
+    @pet.to_restful(:include => :owner).values.map(&:name).should.include :owner
+    Pet.restful_config.whitelisted.include?(:owner).should.equal false
+  end
   
 end
+

@@ -17,17 +17,6 @@ context "restful publish" do
     Person.restful_publish(:name, :pets => [:name, :species])
     Person.restful_config.restful_options.should.==({})
   end
-  
-  specify "should include attributes when publishe parameter is passed to to_restful" do
-    Person.restful_publish(:name)
-    Pet.restful_publish(:name)
-    
-    @person = Person.create
-    @pet = @person.pets.create(:name => "Mietze")
-
-    @pet.to_restful(:include => :owner).values.map(&:name).should.include :owner
-    Pet.restful_config.whitelisted.include?(:owner).should.equal false
-  end
 end
 
 context "api publishing with nesting" do
