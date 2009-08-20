@@ -34,6 +34,7 @@ silence_stream(STDOUT) do
       t.string :name
       t.integer :species
       t.integer :person_id
+      t.string :type
       
       t.timestamp :created_at
       t.timestamp :updated_at
@@ -62,6 +63,7 @@ end
 
 require plugin_root.join 'init'
 require 'fixtures/models/pet'
+require 'fixtures/models/emu'
 require 'fixtures/models/wallet'
 require 'fixtures/models/person'
 require 'fixtures/models/paginated_collection'

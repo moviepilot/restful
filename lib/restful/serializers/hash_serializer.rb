@@ -53,7 +53,6 @@ module Restful
             else                  formatted_value(value)
           end
         end
-
     end
   end
 end

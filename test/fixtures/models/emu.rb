@@ -1,0 +1,2 @@
+class Emu < Pet
+end

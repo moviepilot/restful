@@ -61,12 +61,20 @@ module Restful
             
             # array
             if self.is_a?(Array)
+              element_name = if fst = self.first
+                fst.class.respond_to?(:base_class) ? 
+                  fst.class.base_class.to_s.tableize :
+                  fst.class.to_s.pluralize
+              elsif self.respond_to?(:name)
+                self.name
+              else
+                "nil-classes"
+              end
+
               elements = self.map do |el|
                 raise TypeError.new("Not all array elements respond to #to_restful. ") unless el.respond_to?(:to_restful)
                 Restful::Converters::ActiveRecord.convert(el, !config_parameter.nil? ? Config.new(config_parameter) : el.class.restful_config)
               end
-              
-              element_name = elements.first ? elements.first.name.pluralize : "nil-classes"
               
               returning Restful.collection(element_name, elements, :array) do |collection|
                 collection.total_entries = self.total_entries if self.respond_to?(:total_entries)
@@ -106,7 +114,7 @@ module Restful
           end
           
           def restful_path
-            "/#{ self.class.to_s.tableize }/#{ self.to_param }"
+            "/#{ self.class.base_class.to_s.tableize }/#{ self.to_param }"
           end
         end
         

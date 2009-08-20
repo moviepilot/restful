@@ -11,6 +11,14 @@
 
 * added ability to publish :wallet-restful-url (explicitly collapsed)
 
-20. Aug 2009 - 0.2.13
+20. Aug 2009 
+  
+  - 0.2.13
 
-* hash serializer no longer dereferences ids
+    * hash serializer no longer dereferences ids
+    
+  - 0.2.14
+    
+    * arrays names now use base_class of content models
+    * restful_path defaults to using base_class in path
+    * if array responds to name, use this as collection name

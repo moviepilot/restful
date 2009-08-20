@@ -1,8 +1,21 @@
 require File.dirname(__FILE__) + '/../test_helper.rb'
 
 context "basic types converter" do
+  
   teardown { reset_config }
   
+  specify "should be able to convert a hash to a resource map" do
+    Person.restful_publish(:name)
+    resource = { "zeperson" => @person = Person.create(:name => "fuddzle") }.to_restful
+    resource.should.is_a?(Restful::ApiModel::Map)
+    
+    attrs = resource.simple_attributes
+    attrs.size.should.== 1
+    attrs.first.name.should.== "zeperson"
+    
+    attrs.first.value.values.first.value.== "fuddzle"
+  end
+
   specify "should raise exception if not all array contents respond to .to_restful" do
     Person.restful_publish(:name)
     
@@ -15,6 +28,16 @@ context "basic types converter" do
     collection = [].to_restful
     collection.name.should.== "nil-classes"
   end  
+  
+  specify "should infer array name from first element class" do
+    collection = [Pet.new].to_restful
+    collection.name.should.== "pets"
+  end
+  
+  specify "should infer array name from first element base_class if it is an active_record object" do
+    collection = [Emu.new, Pet.new].to_restful
+    collection.name.should.== "pets"
+  end
 
   specify "should convert an array to a restful collection" do
     Person.restful_publish(:name)
@@ -34,15 +57,13 @@ context "basic types converter" do
     collection.total_entries.should.== 1001
   end
   
-  specify "should be able to convert a hash to a resource map" do
+  specify "should set name on collection if array responds to .name and has this set" do
     Person.restful_publish(:name)
-    resource = { "zeperson" => @person = Person.create(:name => "fuddzle") }.to_restful
-    resource.should.is_a?(Restful::ApiModel::Map)
-    
-    attrs = resource.simple_attributes
-    attrs.size.should.== 1
-    attrs.first.name.should.== "zeperson"
-    
-    attrs.first.value.values.first.value.== "fuddzle"
+    people = PaginatedCollection.new()
+    people.total_entries = 0
+    people.name = "people"
+
+    collection = people.to_restful
+    collection.name.should.== "people"
   end
 end
