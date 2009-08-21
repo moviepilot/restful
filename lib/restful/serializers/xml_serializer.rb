@@ -71,7 +71,7 @@ module Restful
           if value.extended_type == :hash
             build_hash(builder, value)
           else
-            builder.tag!(value.name.to_s.dasherize, formatted_value(value), decorations(value))
+            builder.tag!(value.name.to_s.dasherize, serialize_attribute(value), decorations(value))
           end
         end
         

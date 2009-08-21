@@ -26,3 +26,7 @@
   - 0.2.15
 
     * :includes like active record to_xml to_json
+
+21. Aug 2009
+
+* refactored HashSerializer to be much clearer

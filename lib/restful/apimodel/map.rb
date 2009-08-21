@@ -8,7 +8,7 @@ module Restful
 
       def initialize(name)
         self.name = name
-        self.type = :hash
+        self.type = :map
         self.values = []
       end
 

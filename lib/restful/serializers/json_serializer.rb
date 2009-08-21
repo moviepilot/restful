@@ -11,9 +11,7 @@ module Restful
       serializer_name :json
       
       def serialize(resource, options = {})
-        hasher = Restful::Serializers::HashSerializer.new
-        hash = hasher.serialize(resource, options)
-        Yajl::Encoder.encode(hash)
+        Yajl::Encoder.encode HashSerializer.new.serialize(resource, options)
       end
     end
   end

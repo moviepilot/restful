@@ -6,18 +6,18 @@ module Restful
     class Base
       cattr_accessor :serializers
       
-      def serialize(resource, options = {}) # implement me. 
+      def serialize(resource, options = {})
         raise NotImplementedError.new
       end
       
-      def deserialize(resource, options = {}) # implement me. 
+      def deserialize(resource, options = {})
         raise NotImplementedError.new        
       end
       
       #
       #  Grabs a serializer, given...
       #
-      #    .serialize(:xml, Resource.new(:animal => "cow"))
+      #    #serialize :xml, Resource.new(:animal => "cow")
       #
       def self.serializer(type)
         serializers[type].new
@@ -28,20 +28,21 @@ module Restful
         self.serializers[key] = self
       end
       
-      def formatted_value(value)
-        return value unless value.respond_to?(:value)
+      def serialize_attribute(attribute)
+        return formatted_ruby_type(attribute) unless attribute.respond_to?(:value)
+        return nil if attribute.value.blank? && attribute.extended_type != :false_class
         
-        return nil if value.value.blank? && value.extended_type != :false_class
-        case value.extended_type
-        when :datetime
-          value.value.xmlschema
-        when :time
-          value.value.xmlschema
-        when :date
-          value.value.to_s(:db)
-        else
-          value.value
-        end        
+        formatted_ruby_type(attribute.value)
+      end
+      
+      def formatted_ruby_type(obj)
+        case obj
+          when DateTime then obj.xmlschema
+          when Time     then obj.xmlschema
+          when Date     then obj.to_s(:db)
+          else
+            obj
+          end
       end
       
       protected

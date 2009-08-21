@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper.rb'
 
-context "params serializer" do
+context "xml serializer" do
   setup do 
     Person.restful_publish(:name, :current_location, :pets, :wallet, :created_at)
     Pet.restful_publish(:name)
