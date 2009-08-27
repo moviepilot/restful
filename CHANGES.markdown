@@ -30,3 +30,7 @@
 21. Aug 2009
 
 * refactored HashSerializer to be much clearer
+
+26. Aug 2009
+
+* fixed issue with link collapsing

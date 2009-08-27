@@ -80,7 +80,7 @@ module Restful
             config.whitelisted = config.whitelisted.uniq
             
             # array
-            if self.is_a?(Array)
+            result = if self.is_a?(Array)
               element_name = if fst = self.first
                 fst.class.respond_to?(:base_class) ? 
                   fst.class.base_class.to_s.tableize :
@@ -116,7 +116,10 @@ module Restful
               map
             else
               Restful::Converters::ActiveRecord.convert(self, config)
-            end
+            end  
+            
+            # breakpoint
+            result
           end
                     
           # FIXME: read Restful::Serializers::Base.serializers. Load order problems?

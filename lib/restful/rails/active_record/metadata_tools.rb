@@ -49,10 +49,6 @@ module Restful
             resource.to_restful(config)
           end
 
-          def self.link(key, model, config)
-            Restful.link(key.to_sym, "base", "path", "link")
-          end
-          
           def self.dereference(url)
             if url
               regexp = Regexp.new("#{ Restful::Rails.api_hostname }\/(.*)\/(.*)")
@@ -90,9 +86,7 @@ module Restful
             if models
               [*models].map do |m| 
                 if m.respond_to? :to_restful
-                  config.nested? ?
-                    link(key, m, config) :
-                    expand(m, config)
+                  expand(m, config)
                 else
                   raise "Seems as if you want to export the relation #{ key } of an #{ model.class.to_s } object without making #{ key } apiable."
                 end
