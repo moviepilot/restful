@@ -19,6 +19,7 @@ module Restful
         explicit_links = config.whitelisted.select { |x| x.class == Symbol && x.to_s.ends_with?("_restful_url") }
         explicit_links.each { |link| config.whitelisted.delete(link) }
         explicit_links.map! { |link| link.to_s.chomp("_restful_url").to_sym  }
+        config.whitelisted += explicit_links
         
         # simple attributes
         resource.values += Restful::Rails.tools.simple_attributes_on(model).map do |key, value|
