@@ -74,7 +74,7 @@ atom_person:
       </wallet>
     </person>
     
-verbose_with_pets:
+verbose_no_pets:
   |
     <?xml version="1.0" encoding="UTF-8"?>
     <person>
@@ -82,12 +82,6 @@ verbose_with_pets:
       <name>Joe Bloggs</name>
       <created-at type="datetime"><%= @person.created_at.xmlschema %></created-at>
       <current-location>Under a tree</current-location>
-      <pets type="array">
-        <pet>
-          <restful-url type="link">http://example.com:3000/pets/<%= @pet.id %></restful-url>
-          <name>mietze</name>
-        </pet>
-      </pets>
       <wallet-restful-url type="link" nil="true"></wallet-restful-url>
     </person>
     
