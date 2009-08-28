@@ -4,6 +4,7 @@
 module Restful
   module Converters
     class ActiveRecord
+      
       def self.convert(model, config, options = {})
         published = []
         nested = config.nested?
@@ -27,12 +28,12 @@ module Restful
         # has_many, has_one, belongs_to
         resource.values += model.class.reflections.keys.map do |key|
           explicit_link = !!explicit_links.include?(key)
+          
           if config.published?(key.to_sym) || explicit_link
-            
             nested_config = config.nested(key.to_sym)
             published << key.to_sym
             
-            if has_many?(model, key) && !nested
+            if has_many?(model, key) && config.expanded?(key, nested)
               convert_to_collection(model, key, nested_config, published) do |key, resources, extended_type|
                 Restful.collection(key, resources, extended_type)
               end

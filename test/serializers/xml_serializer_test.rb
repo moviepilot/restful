@@ -30,10 +30,10 @@ context "xml serializer" do
     xml_should_eql_fixture(@person.to_restful_xml(:birthday), "people", :joe_with_birthday)  
   end
   
-  specify "should convert a NULL inner association such as person.wallet to a link with a null value" do
+  xspecify "should convert a NULL inner association such as person.wallet to a link with a null value" do
     @person.wallet = nil
 
-    xml_should_eql_fixture(@person.to_restful_xml(:restful_options => { :expansion => :collapsed }), "people", :verbose_with_pets)    
+    xml_should_eql_fixture(@person.to_restful_xml(:restful_options => { :expansion => :collapsed }), "people", :verbose_with_pets)
   end
   
   specify "serialize to xml, rails style" do

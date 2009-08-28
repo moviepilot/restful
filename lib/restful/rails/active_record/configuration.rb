@@ -93,6 +93,7 @@ module Restful
 
               elements = self.map do |el|
                 raise TypeError.new("Not all array elements respond to #to_restful. ") unless el.respond_to?(:to_restful)
+                
                 Utils.convert_to_single_resource(config_parameter, el)
               end
               
@@ -118,7 +119,6 @@ module Restful
               Restful::Converters::ActiveRecord.convert(self, config)
             end  
             
-            # breakpoint
             result
           end
                     
@@ -151,11 +151,19 @@ module Restful
           end
 
           def published?(key)
-            @whitelisted.include?(key) || !!@whitelisted.select { |field| field.is_a?(Hash)  && field.keys.include?(key) }.first
+            @whitelisted.include?(key) || 
+            !!@whitelisted.select { |field| field.is_a?(Hash)  && field.keys.include?(key) }.first ||
+            explicit_include?(key)
           end
 
           def expanded?(key, nested = false) # if nothing was set, this defaults to true. 
-            force_expanded?(key) || (@restful_options[:expansion] != :collapsed && !nested)
+            force_expanded?(key) || 
+            (@restful_options[:expansion] != :collapsed && !nested) || 
+            explicit_include?(key)
+          end
+          
+          def explicit_include?(key)
+            [*self.restful_options[:include]].include?(key)            
           end
           
           def force_expanded?(key)
@@ -169,7 +177,9 @@ module Restful
 
           def nested(key)
             definition = @whitelisted.select { |field| field.is_a?(Hash)  && field.keys.include?(key) }.first
-            Config.new((definition[key] if definition))
+            config = Config.new((definition[key] if definition))
+            config.restful_options[:include] = self.restful_options[:include]
+            config
           end
 
           private
@@ -180,8 +190,17 @@ module Restful
               return array.map do |el|
                 if el.is_a? Hash
                   el = el.clone
-                  deleted = el.delete(:restful_options) 
-                  options.merge!(deleted) if deleted
+                  
+                  deleted = {}
+                  if restful_options = el.delete(:restful_options)
+                    deleted.merge! restful_options
+                  end
+                  
+                  if included = el.delete(:include)
+                    deleted[:include] = included
+                  end
+
+                  options.merge!(deleted) if deleted.keys.size > 0
                   el = nil if el == {}
                 end
               

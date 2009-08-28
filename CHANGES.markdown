@@ -34,3 +34,7 @@
 26. Aug 2009
 
 * fixed issue with link collapsing
+
+28. Aug 2009
+
+* fixed cascading of :includes

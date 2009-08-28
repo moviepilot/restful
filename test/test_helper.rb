@@ -36,32 +36,37 @@ silence_stream(STDOUT) do
       t.integer :person_id
       t.string :type
       
-      t.timestamp :created_at
-      t.timestamp :updated_at
+      t.timestamps
+    end
+
+    create_table :houses do |t|
+      t.string :name
+      
+      t.timestamps
     end
 
     create_table :people do |t|
       t.string :name
       t.string :current_location
       t.string :biography
+      t.integer :house_id
       t.date   :birthday
       t.datetime :last_login
 
-      t.timestamp :created_at      
-      t.timestamp :updated_at
+      t.timestamps
     end
 
     create_table :wallets do |t|
       t.string :person_id
       t.string :contents
       
-      t.timestamp :created_at
-      t.timestamp :updated_at
+      t.timestamps
     end
   end
 end
 
 require plugin_root.join 'init'
+require 'fixtures/models/house'
 require 'fixtures/models/pet'
 require 'fixtures/models/emu'
 require 'fixtures/models/wallet'

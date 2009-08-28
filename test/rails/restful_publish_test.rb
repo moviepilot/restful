@@ -20,6 +20,7 @@ context "restful publish" do
 end
 
 context "api publishing with nesting" do
+
   teardown do
     reset_config
   end
@@ -37,5 +38,17 @@ context "api publishing with nesting" do
     Pet.any_instance.expects(:to_restful).with { |arg| arg.whitelisted == [:name, :species] }
     @person.to_restful
   end
-end
+  
+  specify "should pass config over to nested objects. " do
+    Pet.restful_publish :name
+    House.restful_publish :people
 
+    house = House.create
+    person = house.people.create :name => "johannes"
+    person.pets.create :name => "puenktchen"
+
+    restful = [house].to_restful(:include => :pets)
+
+    restful.value.first.collections.first.value.first.collections.size.should.== 1
+  end 
+end

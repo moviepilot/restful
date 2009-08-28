@@ -13,9 +13,6 @@ context "Configuration" do
     config.whitelisted.should.not.include :restful_options
   end
   
-  specify "should have 0 whitelisted fields if none were specified" do
-  end
-  
   specify "should know if it has restful_options" do
     config = Restful.cfg([:one, :two])
     config.restful_options[:expansion] = :expanded
@@ -37,4 +34,14 @@ context "Configuration" do
     config = Restful.cfg(:one, :restful_options => {:nested => true})
     config.nested?.should.== true
   end
+  
+  specify "should preserve :include when :restful_options are present" do
+    Person.restful_publish :pets
+    p = Person.create
+    p.pets.create
+    
+    restful = p.to_restful :include => :pets, :restful_options => {}
+    restful.collections.size.should.== 1
+  end
+  
 end
