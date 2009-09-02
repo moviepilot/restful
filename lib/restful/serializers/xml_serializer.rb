@@ -1,7 +1,6 @@
 require 'restful/serializers/base'
 require "rexml/document"
 require 'builder'
-require 'ruby-debug'
 
 #
 #  Converts an APIModel to and from XML. 
